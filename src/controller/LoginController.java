@@ -1,14 +1,23 @@
 package controller;
 
+import helper.UserQuery;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -21,10 +30,11 @@ public class LoginController implements Initializable {
     public TextField locationField;
     public Text loginText;
     private String username;    //TODO: Pull username forward for update field
+    private Locale locale;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        Locale locale = Locale.getDefault();
+        locale = Locale.getDefault();
         ZoneId zoneId = ZoneId.systemDefault();
         locationField.setText(zoneId.toString());
         if (locale.getLanguage().equals("en")){
@@ -37,16 +47,35 @@ public class LoginController implements Initializable {
             locationText.setText("Emplacement");
         }
     }
-
-    public void enterClick(ActionEvent actionEvent) {loginCheck();}
-    public void enterPassword(ActionEvent actionEvent) {loginCheck();}
-    public void enterUsername(ActionEvent actionEvent) {loginCheck();}
-    public void loginCheck(){
-        boolean loginResult;
-        if(true){
-            Alert error = new Alert(Alert.AlertType.ERROR,"Username & password not found.");
+    public String getUsername(){
+        return username;
+    }
+    public void enterClick(ActionEvent actionEvent) throws SQLException {loginCheck();}
+    public void enterPassword(ActionEvent actionEvent) throws SQLException {loginCheck();}
+    public void enterUsername(ActionEvent actionEvent) throws SQLException {loginCheck();}
+    //TODO: Translate to French
+    public void loginCheck() throws SQLException {
+        File loginFile = new File("..//login_activity.txt");
+        username = usernameField.getText();
+        String password = passwordField.getText();
+        boolean loginResults = UserQuery.checkLogin(username, password);
+        try {
+            FileWriter writer = new FileWriter(loginFile);
+            writer.write("login to " + username + " at " + ZonedDateTime.now());
+            if (loginResults){
+                writer.write(" successful");
+                Stage stage = FXMLLoader.load(getClass().getResource("../view/home.fxml"));
+                stage.setTitle("Home");
+                stage.show();
+            }
+            else{
+                writer.write(" unsuccessful");
+                Alert error = new Alert(Alert.AlertType.ERROR,"Username & password not found.");
+                error.showAndWait();
+            }
+        }catch (IOException e) {
+            Alert error = new Alert(Alert.AlertType.ERROR,"Error. Login attempt unsuccessful.");
             error.showAndWait();
         }
-        //TODO: Continually update login_activity.txt with date, time, and if successful
     }
 }

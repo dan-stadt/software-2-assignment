@@ -1,17 +1,16 @@
 package helper;
 
-import sample.JDBC;
-
+import main.JDBC;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Arrays;
 
 public class CustomerQuery {
-    public static enum customerFields{
+    public enum customerFields{
         Customer_ID, Customer_Name, Address, Postal_Code, Phone, Create_Date, Created_By, Last_Update, Last_Updated_By, Division_ID;
     }
     public static int insertCustomer (String name, String address, String postalCode, String phone, int division) throws SQLException {
-        customerFields.values();
-        String sql = "INSERT INTO customers (" + customerFields.values() + ") VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?"; //TODO: Confirm works
+        String sql = "INSERT INTO customers (" + Arrays.toString(customerFields.values()) + ") VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?"; //TODO: Confirm works
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
         int id = 1;         //TODO: Update to select unused ID
         String date = "";    //TODO: Update to calculate today's today
