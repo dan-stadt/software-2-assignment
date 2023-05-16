@@ -5,6 +5,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -61,15 +62,17 @@ public class LoginController implements Initializable {
         boolean loginResults = UserQuery.checkLogin(username, password);
         try {
             FileWriter writer = new FileWriter(loginFile);
-            writer.write("login to " + username + " at " + ZonedDateTime.now());
+            writer.append("login to ").append(username).append(" at ").append(String.valueOf(ZonedDateTime.now()));
             if (loginResults){
-                writer.write(" successful");
-                Stage stage = FXMLLoader.load(getClass().getResource("../view/home.fxml"));
+                writer.append(" successful");
+                Parent root = FXMLLoader.load(getClass().getResource("../view/home.fxml"));
+                Stage stage = new Stage();
+                stage.setScene(new Scene(root));
                 stage.setTitle("Home");
                 stage.show();
             }
             else{
-                writer.write(" unsuccessful");
+                writer.append(" unsuccessful");
                 Alert error = new Alert(Alert.AlertType.ERROR,"Username & password not found.");
                 error.showAndWait();
             }

@@ -1,16 +1,21 @@
 package controller;
 
-import javafx.fxml.FXML;
-import javafx.scene.control.Button;
+import javafx.event.ActionEvent;
 
 public class HomeController {
-    @FXML
-    public Button summaryReportBtn;
-    @FXML
-    public Button customerReportBtn;
-    @FXML
-    public Button employeeReportBtn;
-    @FXML
-    public Button customerButton;
+    public void appointmentButton(ActionEvent actionEvent) {
 
+    }
+    public void customerButton(ActionEvent actionEvent) {
+
+    }
+    public void customerReportBtn(ActionEvent actionEvent) {
+
+    }
+    public void employeeReportBtn(ActionEvent actionEvent) {
+
+    }
+    public void summaryReportBtn(ActionEvent actionEvent) {
+
+    }
 }
