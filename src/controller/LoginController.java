@@ -11,7 +11,6 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -30,7 +29,7 @@ public class LoginController implements Initializable {
     public Text locationText;
     public TextField locationField;
     public Text loginText;
-    private String username;    //TODO: Pull username forward for update field
+    private static String username;    //TODO: Pull username forward for update field
     private Locale locale;
 
     @Override
@@ -48,7 +47,7 @@ public class LoginController implements Initializable {
             locationText.setText("Emplacement");
         }
     }
-    public String getUsername(){
+    public static String getUsername(){
         return username;
     }
     public void enterClick(ActionEvent actionEvent) throws SQLException {loginCheck();}
