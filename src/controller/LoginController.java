@@ -56,15 +56,17 @@ public class LoginController implements Initializable {
     public void enterUsername(ActionEvent actionEvent) throws SQLException {loginCheck();}
     //TODO: Translate to French
     public void loginCheck() throws SQLException {
-        File loginFile = new File("..//login_activity.txt");
+        File loginFile = new File("login_activity.txt");
         username = usernameField.getText();
         String password = passwordField.getText();
         boolean loginResults = UserQuery.checkLogin(username, password);
         try {
-            FileWriter writer = new FileWriter(loginFile);
-            writer.append("login to ").append(username).append(" at ").append(String.valueOf(ZonedDateTime.now()));
+            FileWriter writer = new FileWriter(loginFile,true);
+            String time = ZonedDateTime.now().toString();
+            writer.write("login to " +username + " at " + time);
             if (loginResults){
-                writer.append(" successful");
+                writer.append(" successful\n");
+                writer.close();
                 Parent root = FXMLLoader.load(getClass().getResource("../view/home.fxml"));
                 Stage stage = new Stage();
                 stage.setScene(new Scene(root));
@@ -72,7 +74,8 @@ public class LoginController implements Initializable {
                 stage.show();
             }
             else{
-                writer.append(" unsuccessful");
+                writer.append(" unsuccessful\n");
+                writer.close();
                 Alert error = new Alert(Alert.AlertType.ERROR,"Username & password not found.");
                 error.showAndWait();
             }
