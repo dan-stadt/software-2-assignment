@@ -7,7 +7,7 @@ public class Customer {
     private String postal;
     private String phone;
 
-    public int getId(){return id;}
+    public Integer getId(){return id;}
     public String getName(){return name;}
     public String getAddress(){return address;}
     public String getPostal(){return postal;}

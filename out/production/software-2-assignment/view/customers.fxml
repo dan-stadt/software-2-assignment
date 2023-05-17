@@ -13,8 +13,8 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="400.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.CustomerController">
-    <TableView layoutX="14.0" layoutY="25.0" prefHeight="350.0" prefWidth="667.0">
+<AnchorPane fx:id="customerWindow" prefHeight="400.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.CustomerController">
+    <TableView fx:id="customerTable" layoutX="14.0" layoutY="25.0" prefHeight="350.0" prefWidth="667.0">
       <columns>
           <TableColumn prefWidth="75.0" text="Customer ID" fx:id="idColumn"/>
           <TableColumn prefWidth="125.0" text="Name" fx:id="nameColumn"/>
@@ -65,8 +65,8 @@
     </GridPane>
     <ButtonBar buttonMinWidth="50.0" layoutX="787.0" layoutY="343.0">
       <buttons>
-          <Button mnemonicParsing="false" text="Appointments" onAction="#appointmentBtnPress"/>
-          <Button mnemonicParsing="false" text="Back" fx:id="backBtn" onAction="#backBtnPress"/>
+          <Button mnemonicParsing="false" text="Appointments" onAction="#appointmentClicked"/>
+          <Button mnemonicParsing="false" text="Home" fx:id="homeButton" onAction="#homeClicked"/>
       </buttons>
     </ButtonBar>
 </AnchorPane>

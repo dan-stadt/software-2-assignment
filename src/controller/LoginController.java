@@ -7,8 +7,10 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import java.io.File;
@@ -29,22 +31,30 @@ public class LoginController implements Initializable {
     public Text locationText;
     public TextField locationField;
     public Text loginText;
-    private static String username;    //TODO: Pull username forward for update field
-    private Locale locale;
+    private static String username;
+    public AnchorPane loginWindow;
+    public Button exitButton;
+    private Alert ioError;
+    private Alert loginError;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        locale = Locale.getDefault();
+        exitButton.setCancelButton(true);
+        Locale locale = Locale.getDefault();
         ZoneId zoneId = ZoneId.systemDefault();
         locationField.setText(zoneId.toString());
         if (locale.getLanguage().equals("en")){
             System.out.println("English");
+            ioError = new Alert(Alert.AlertType.ERROR, "Error. Login unsuccessful.")
+            loginError = new Alert(Alert.AlertType.ERROR, "Matching username and password not found.")
         }
         if (locale.getLanguage().equals("fr")){
             usernameText.setText("Nom d'utilisateur");
             passwordText.setText("Mot de passe");
             loginText.setText("Connexion");
             locationText.setText("Emplacement");
+            ioError = new Alert(Alert.AlertType.ERROR, "Error. Login unsuccessful.")
+            loginError = new Alert(Alert.AlertType.ERROR, "Matching username and password not found.")
         }
     }
     public static String getUsername(){
@@ -66,21 +76,32 @@ public class LoginController implements Initializable {
             if (loginResults){
                 writer.append(" successful\n");
                 writer.close();
-                Parent root = FXMLLoader.load(getClass().getResource("../view/home.fxml"));
-                Stage stage = new Stage();
-                stage.setScene(new Scene(root));
-                stage.setTitle("Home");
-                stage.show();
+                HomeController.open();
+                close();
             }
             else{
                 writer.append(" unsuccessful\n");
                 writer.close();
-                Alert error = new Alert(Alert.AlertType.ERROR,"Username & password not found.");
-                error.showAndWait();
+                loginError.showAndWait();
             }
         }catch (IOException e) {
-            Alert error = new Alert(Alert.AlertType.ERROR,"Error. Login attempt unsuccessful.");
-            error.showAndWait();
+            ioError.showAndWait();
         }
     }
+    public void exitClick(ActionEvent actionEvent) {
+        close();
+    }
+    public void close(){
+        Stage stage = (Stage) loginWindow.getScene().getWindow();
+        stage.close();
+    }
+    public void open() throws IOException{
+        Stage stage = new Stage();
+        Parent root = FXMLLoader.load(LoginController.class.getResource("../view/login.fxml"));
+        stage.setTitle("Login");
+        stage.setScene(new Scene(root));
+        stage.show();
+
+    }
+
 }

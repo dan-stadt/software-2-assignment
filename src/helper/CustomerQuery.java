@@ -25,5 +25,6 @@ public class CustomerQuery {
         String sql = "SELECT * FROM customers";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
         return ps.executeQuery();
+
     }
 }

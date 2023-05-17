@@ -8,38 +8,38 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-
-<AnchorPane minHeight="175.0" minWidth="300.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="controller.HomeController">
-   <VBox alignment="TOP_CENTER" layoutX="13.0" layoutY="18.0">
+<AnchorPane fx:id="homeWindow" minHeight="200.0" minWidth="300.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.HomeController">
+   <VBox alignment="TOP_CENTER" layoutX="23.0" layoutY="14.0">
       <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Access Records">
          <font>
-            <Font name="System Bold" size="12.0"/>
+            <Font name="System Bold" size="12.0" />
          </font>
       </Text>
       <HBox alignment="CENTER" spacing="10.0">
          <padding>
-            <Insets bottom="10.0" left="10.0" right="10.0" top="5.0"/>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="5.0" />
          </padding>
-         <Button onAction="#customerButton" mnemonicParsing="false" prefWidth="100.0" text="Customers"
-                 textAlignment="CENTER"/>
-         <Button onAction="#appointmentButton" mnemonicParsing="false" prefWidth="100.0" text="Appointments"/>
+         <Button mnemonicParsing="false" onAction="#customerButton" prefWidth="100.0" text="Customers" textAlignment="CENTER" />
+         <Button mnemonicParsing="false" onAction="#appointmentButton" prefWidth="100.0" text="Appointments" />
       </HBox>
       <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Generate Appointment Reports">
          <VBox.margin>
-            <Insets top="25.0"/>
+            <Insets top="25.0" />
          </VBox.margin>
          <font>
-            <Font name="System Bold" size="12.0"/>
+            <Font name="System Bold" size="12.0" />
          </font>
       </Text>
       <HBox alignment="TOP_CENTER" spacing="10.0">
          <padding>
-            <Insets bottom="10.0" left="10.0" right="10.0" top="5.0"/>
+            <Insets bottom="25.0" top="5.0" />
          </padding>
-         <Button onAction="#summaryReportBtn" mnemonicParsing="false" text="Summary"/>
-         <Button onAction="#employeeReportBtn" mnemonicParsing="false" text="By Employee"/>
-         <Button onAction="#customerReportBtn" mnemonicParsing="false" text="By Customer"/>
+         <Button mnemonicParsing="false" onAction="#summaryReportBtn" text="Summary" />
+         <Button mnemonicParsing="false" onAction="#employeeReportBtn" text="By Employee" />
+         <Button mnemonicParsing="false" onAction="#customerReportBtn" text="By Customer" />
+      </HBox>
+      <HBox alignment="CENTER_RIGHT">
+         <Button mnemonicParsing="false" text="Sign out" onAction="#exitClicked" fx:id="exitButton"/>
       </HBox>
    </VBox>
 </AnchorPane>
