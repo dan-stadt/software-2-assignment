@@ -16,19 +16,19 @@
 <AnchorPane fx:id="customerWindow" prefHeight="400.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.CustomerController">
     <TableView fx:id="customerTable" layoutX="14.0" layoutY="25.0" prefHeight="350.0" prefWidth="667.0">
       <columns>
-          <TableColumn prefWidth="75.0" text="Customer ID" fx:id="idColumn"/>
-          <TableColumn prefWidth="125.0" text="Name" fx:id="nameColumn"/>
-          <TableColumn prefWidth="140.0" text="Address" fx:id="addressColumn"/>
-          <TableColumn prefWidth="75.0" text="Region" fx:id="regionColumn" />
-          <TableColumn prefWidth="75.0" text="Country" fx:id="countryColumn"/>
-          <TableColumn prefWidth="75.0" text="Postal Code" fx:id="postalColumn"/>
-          <TableColumn prefWidth="100.0" text="Phone Number" fx:id="phoneColumn"/>
+          <TableColumn fx:id="idColumn" prefWidth="75.0" text="Customer ID" />
+          <TableColumn fx:id="nameColumn" prefWidth="125.0" text="Name" />
+          <TableColumn fx:id="addressColumn" prefWidth="140.0" text="Address" />
+          <TableColumn fx:id="regionColumn" prefWidth="75.0" text="Region" />
+          <TableColumn fx:id="countryColumn" prefWidth="75.0" text="Country" />
+          <TableColumn fx:id="postalColumn" prefWidth="75.0" text="Postal Code" />
+          <TableColumn fx:id="phoneColumn" prefWidth="100.0" text="Phone Number" />
       </columns>
     </TableView>
     <GridPane layoutX="701.0" layoutY="25.0">
         <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="200.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="200.0" />
         </columnConstraints>
         <rowConstraints>
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -40,16 +40,15 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
         </rowConstraints>
-        <TextField disable="true" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-        <TextField GridPane.columnIndex="1" GridPane.rowIndex="2" />
-        <TextField GridPane.columnIndex="1" GridPane.rowIndex="3" />
-        <ComboBox prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-        <ComboBox prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-        <TextField GridPane.columnIndex="1" GridPane.rowIndex="6" />
-        <TextField promptText="000-000-0000" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+        <TextField fx:id="idField" disable="true" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+        <TextField fx:id="nameField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+        <ComboBox fx:id="countryBox" onAction="#countryChange" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+        <ComboBox fx:id="regionBox" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+        <TextField fx:id="addressField" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+        <TextField fx:id="postalField" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+        <TextField fx:id="phoneField" promptText="000-000-0000" GridPane.columnIndex="1" GridPane.rowIndex="7" />
         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Customers" underline="true">
             <font>
                 <Font name="System Bold" size="12.0" />
@@ -57,16 +56,17 @@
         </Text>
         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Customer ID" GridPane.rowIndex="1" />
         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Customer Name" GridPane.rowIndex="2" />
-        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Customer Address" GridPane.rowIndex="3" />
-        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Country" GridPane.rowIndex="4" />
-        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="State / Province" GridPane.rowIndex="5" />
+        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Country" GridPane.rowIndex="3" />
+        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="State / Province" GridPane.rowIndex="4" />
+        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Customer Address" GridPane.rowIndex="5" />
         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Postal Code" GridPane.rowIndex="6" />
         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Phone Number" GridPane.rowIndex="7" />
+      <Button fx:id="addButton" mnemonicParsing="false" onAction="#addClicked" text="Add New Customer" GridPane.columnIndex="1" GridPane.halignment="RIGHT" />
     </GridPane>
     <ButtonBar buttonMinWidth="50.0" layoutX="787.0" layoutY="343.0">
       <buttons>
-          <Button mnemonicParsing="false" text="Appointments" onAction="#appointmentClicked"/>
-          <Button mnemonicParsing="false" text="Home" fx:id="homeButton" onAction="#homeClicked"/>
+          <Button mnemonicParsing="false" onAction="#appointmentClicked" text="Appointments" />
+          <Button fx:id="homeButton" mnemonicParsing="false" onAction="#homeClicked" text="Home" />
       </buttons>
     </ButtonBar>
 </AnchorPane>

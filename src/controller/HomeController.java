@@ -9,7 +9,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -19,7 +18,6 @@ public class HomeController implements Initializable {
     public AnchorPane homeWindow;
 
     public static void open() throws IOException{
-        HomeController homeController = new HomeController();
         Parent root = FXMLLoader.load(HomeController.class.getResource("../view/home.fxml"));
         Stage stage = new Stage();
         stage.setScene(new Scene(root));

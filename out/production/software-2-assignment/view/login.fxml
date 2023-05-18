@@ -32,7 +32,7 @@
         <TextField fx:id="locationField" disable="true" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="3" />
         <Button mnemonicParsing="false" onAction="#enterClick" text="&gt;" GridPane.columnIndex="2" GridPane.rowIndex="2">
         </Button>
-        <Button onAction="#exitClick" mnemonicParsing="false" text="Exit" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+        <Button fx:id="exitButton" onAction="#exitClick" mnemonicParsing="false" text="Exit" GridPane.columnIndex="2" GridPane.rowIndex="3" />
         <Text fx:id="loginText" strokeType="OUTSIDE" strokeWidth="0.0" text="Login" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="TOP">
            <font>
              <Font size="18.0" />

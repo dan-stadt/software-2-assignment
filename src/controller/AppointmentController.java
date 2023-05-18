@@ -21,7 +21,7 @@ public class AppointmentController implements Initializable {
     public AnchorPane appointmentWindow;
 
     public void open() throws IOException {
-        Parent root = FXMLLoader.load(AppointmentController.class.getResource("../view/appointments.fxml"));
+        Parent root = FXMLLoader.load(AppointmentController.class.getResource("../view/appointment.fxml"));
         Stage stage = new Stage();
         stage.setScene(new Scene(root));
         stage.setTitle("Appointments");

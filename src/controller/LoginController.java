@@ -44,17 +44,16 @@ public class LoginController implements Initializable {
         ZoneId zoneId = ZoneId.systemDefault();
         locationField.setText(zoneId.toString());
         if (locale.getLanguage().equals("en")){
-            System.out.println("English");
-            ioError = new Alert(Alert.AlertType.ERROR, "Error. Login unsuccessful.")
-            loginError = new Alert(Alert.AlertType.ERROR, "Matching username and password not found.")
+            ioError = new Alert(Alert.AlertType.ERROR, "Error. Login unsuccessful.");
+            loginError = new Alert(Alert.AlertType.ERROR, "Matching username and password not found.");
         }
         if (locale.getLanguage().equals("fr")){
             usernameText.setText("Nom d'utilisateur");
             passwordText.setText("Mot de passe");
             loginText.setText("Connexion");
             locationText.setText("Emplacement");
-            ioError = new Alert(Alert.AlertType.ERROR, "Error. Login unsuccessful.")
-            loginError = new Alert(Alert.AlertType.ERROR, "Matching username and password not found.")
+            ioError = new Alert(Alert.AlertType.ERROR, "Erreur. Échec de la connexion.");
+            loginError = new Alert(Alert.AlertType.ERROR, "Nom d'utilisateur et mot de passe correspondants introuvables.");
         }
     }
     public static String getUsername(){
@@ -63,7 +62,6 @@ public class LoginController implements Initializable {
     public void enterClick(ActionEvent actionEvent) throws SQLException {loginCheck();}
     public void enterPassword(ActionEvent actionEvent) throws SQLException {loginCheck();}
     public void enterUsername(ActionEvent actionEvent) throws SQLException {loginCheck();}
-    //TODO: Translate to French
     public void loginCheck() throws SQLException {
         File loginFile = new File("login_activity.txt");
         username = usernameField.getText();
@@ -72,7 +70,7 @@ public class LoginController implements Initializable {
         try {
             FileWriter writer = new FileWriter(loginFile,true);
             String time = ZonedDateTime.now().toString();
-            writer.write("login to " +username + " at " + time);
+            writer.write("login attempt to " +username + " at " + time);
             if (loginResults){
                 writer.append(" successful\n");
                 writer.close();
