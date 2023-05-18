@@ -74,7 +74,8 @@ public class LoginController implements Initializable {
             if (loginResults){
                 writer.append(" successful\n");
                 writer.close();
-                HomeController.open();
+                HomeController home = new HomeController();
+                home.open();
                 close();
             }
             else{

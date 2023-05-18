@@ -60,6 +60,7 @@ public class CustomerController implements Initializable {
     public AnchorPane customerWindow;
     public Button saveButton;
     public Button addButton;
+    public Button editButton;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -96,14 +97,19 @@ public class CustomerController implements Initializable {
         //Lambda
         ListChangeListener<Customer> tableListener = change -> {
             Customer customer = customerTable.getSelectionModel().getSelectedItem();
-            idField.setText(customer.getId().toString());
-            nameField.setText(customer.getName());
-            addressField.setText(customer.getAddress());
-            postalField.setText(customer.getPostal());
-            phoneField.setText(customer.getPhone());
-            countryBox.setValue(customer.getCountry());
-            regionBox.setValue(customer.getRegion());
+            if(customer != null){
+                idField.setText(customer.getId().toString());
+                nameField.setText(customer.getName());
+                addressField.setText(customer.getAddress());
+                postalField.setText(customer.getPostal());
+                phoneField.setText(customer.getPhone());
+                countryBox.setValue(customer.getCountry());
+                regionBox.setValue(customer.getRegion());
+            }
             saveButton.setVisible(true);
+            editButton.setVisible(true);
+            addButton.setVisible(true);
+            disableFields();
         };
         customerTable.getSelectionModel().getSelectedItems().addListener(tableListener);
     }
@@ -129,9 +135,6 @@ public class CustomerController implements Initializable {
         stage.close();
     }
 
-    public void updateClicked(ActionEvent actionEvent) {
-    }
-
     public void countryChange(ActionEvent actionEvent) throws SQLException {
         String country = countryBox.getValue();
 
@@ -140,7 +143,17 @@ public class CustomerController implements Initializable {
 
     public void addClicked(ActionEvent actionEvent) {
         checkChanges();
+        addButton.setVisible(false);
+        editButton.setVisible(false);
         customerTable.getSelectionModel().clearSelection();
+        enableFields();
+        clearFields();
+        saveButton.setVisible(true);    }
+    //TODO: Method to check for unsaved changes
+    public void checkChanges(){
+        
+    }
+    public void clearFields(){
         idField.clear();
         nameField.clear();
         addressField.clear();
@@ -148,9 +161,30 @@ public class CustomerController implements Initializable {
         phoneField.clear();
         countryBox.setValue("");
         regionBox.setValue("");
-        saveButton.setVisible(true);    }
-    //TODO: Method to check for unsaved changes
-    public void checkChanges(){
-        
+    }
+    public void enableFields(){
+        nameField.setDisable(false);
+        addressField.setDisable(false);
+        postalField.setDisable(false);
+        phoneField.setDisable(false);
+        countryBox.setDisable(false);
+        regionBox.setDisable(false);
+    }
+    public void disableFields(){
+        nameField.setDisable(true);
+        addressField.setDisable(true);
+        postalField.setDisable(true);
+        phoneField.setDisable(true);
+        countryBox.setDisable(true);
+        regionBox.setDisable(true);
+    }
+    public void saveClicked(ActionEvent actionEvent) {
+        //TODO:IMPLEMENT ERROR CHECKING
+        disableFields();
+    }
+
+    public void editClicked(ActionEvent actionEvent) {
+        editButton.setVisible(false);
+        enableFields();
     }
 }

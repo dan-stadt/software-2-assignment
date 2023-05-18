@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ButtonBar?>
 <?import javafx.scene.control.ComboBox?>
@@ -43,12 +44,12 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
         </rowConstraints>
         <TextField fx:id="idField" disable="true" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-        <TextField fx:id="nameField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-        <ComboBox fx:id="countryBox" onAction="#countryChange" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-        <ComboBox fx:id="regionBox" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-        <TextField fx:id="addressField" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-        <TextField fx:id="postalField" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-        <TextField fx:id="phoneField" promptText="000-000-0000" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+        <TextField fx:id="nameField" disable="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+        <ComboBox fx:id="countryBox" disable="true" onAction="#countryChange" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+        <ComboBox fx:id="regionBox" disable="true" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+        <TextField fx:id="addressField" disable="true" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+        <TextField fx:id="postalField" disable="true" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+        <TextField fx:id="phoneField" disable="true" promptText="000-000-0000" GridPane.columnIndex="1" GridPane.rowIndex="7" />
         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Customers" underline="true">
             <font>
                 <Font name="System Bold" size="12.0" />
@@ -61,7 +62,17 @@
         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Customer Address" GridPane.rowIndex="5" />
         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Postal Code" GridPane.rowIndex="6" />
         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Phone Number" GridPane.rowIndex="7" />
-      <Button fx:id="addButton" mnemonicParsing="false" onAction="#addClicked" text="Add New Customer" GridPane.columnIndex="1" GridPane.halignment="RIGHT" />
+      <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveClicked" text="Save" visible="false" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="8" />
+      <Button fx:id="editButton" mnemonicParsing="false" visible="false" onAction="#editClicked" text="Edit Record" GridPane.columnIndex="1" GridPane.halignment="RIGHT">
+         <GridPane.margin>
+            <Insets />
+         </GridPane.margin>
+      </Button>
+      <Button fx:id="addButton" mnemonicParsing="false" onAction="#addClicked" text="Add New Customer" GridPane.columnIndex="1">
+         <GridPane.margin>
+            <Insets />
+         </GridPane.margin>
+      </Button>
     </GridPane>
     <ButtonBar buttonMinWidth="50.0" layoutX="787.0" layoutY="343.0">
       <buttons>

@@ -17,7 +17,7 @@ public class HomeController implements Initializable {
     public Button exitButton;
     public AnchorPane homeWindow;
 
-    public static void open() throws IOException{
+    public void open() throws IOException{
         Parent root = FXMLLoader.load(HomeController.class.getResource("../view/home.fxml"));
         Stage stage = new Stage();
         stage.setScene(new Scene(root));
