@@ -19,7 +19,7 @@
          <padding>
             <Insets bottom="10.0" left="10.0" right="10.0" top="5.0" />
          </padding>
-         <Button mnemonicParsing="false" onAction="#customerButton" prefWidth="100.0" text="Customers" textAlignment="CENTER" />
+         <Button mnemonicParsing="false" onAction="#onCustomerClicked" prefWidth="100.0" text="Customers" textAlignment="CENTER" />
          <Button mnemonicParsing="false" onAction="#appointmentButton" prefWidth="100.0" text="Appointments" />
       </HBox>
       <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Generate Appointment Reports">
@@ -34,12 +34,12 @@
          <padding>
             <Insets bottom="25.0" top="5.0" />
          </padding>
-         <Button mnemonicParsing="false" onAction="#summaryReportBtn" text="Summary" />
-         <Button mnemonicParsing="false" onAction="#employeeReportBtn" text="By Employee" />
-         <Button mnemonicParsing="false" onAction="#customerReportBtn" text="By Customer" />
+         <Button mnemonicParsing="false" onAction="#onSummaryReportClicked" text="Summary" />
+         <Button mnemonicParsing="false" onAction="#onEmployeeReportClicked" text="By Employee" />
+         <Button mnemonicParsing="false" onAction="#onCustomerReportClicked" text="By Customer" />
       </HBox>
       <HBox alignment="CENTER_RIGHT">
-         <Button mnemonicParsing="false" text="Sign out" onAction="#exitClicked" fx:id="exitButton"/>
+         <Button mnemonicParsing="false" text="Sign out" onAction="#onExitClicked" fx:id="exitButton"/>
       </HBox>
    </VBox>
 </AnchorPane>

@@ -17,6 +17,10 @@ public class HomeController implements Initializable {
     public Button exitButton;
     public AnchorPane homeWindow;
 
+    public void close(){
+        Stage stage = (Stage) homeWindow.getScene().getWindow();
+        stage.close();
+    }
     public void open() throws IOException{
         Parent root = FXMLLoader.load(HomeController.class.getResource("../view/home.fxml"));
         Stage stage = new Stage();
@@ -34,31 +38,25 @@ public class HomeController implements Initializable {
         appointments.open();
         close();
     }
-    public void customerButton(ActionEvent actionEvent) throws IOException {
+    public void onCustomerClicked(ActionEvent actionEvent) throws IOException {
         CustomerController customer = new CustomerController();
         customer.open();
         close();
     }
-    public void customerReportBtn(ActionEvent actionEvent) {
+    //TODO: Generate reports
+    public void onCustomerReportClicked(ActionEvent actionEvent) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        //TODO: Generate report for summary by type and month
         alert.setContentText("");
     }
-    public void employeeReportBtn(ActionEvent actionEvent) {
+    public void onEmployeeReportClicked(ActionEvent actionEvent) {
 
     }
-    public void summaryReportBtn(ActionEvent actionEvent) {
+    public void onSummaryReportClicked(ActionEvent actionEvent) {
 
     }
-
-
-    public void exitClicked(ActionEvent actionEvent) throws IOException{
+    public void onExitClicked(ActionEvent actionEvent) throws IOException{
         LoginController login = new LoginController();
         login.open();
         close();
-    }
-    public void close(){
-        Stage stage = (Stage) homeWindow.getScene().getWindow();
-        stage.close();
     }
 }

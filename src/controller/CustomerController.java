@@ -12,6 +12,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import main.Customer;
@@ -58,14 +59,23 @@ public class CustomerController implements Initializable {
     private final ObservableList<Customer> customerList = FXCollections.observableArrayList();
     @FXML
     public AnchorPane customerWindow;
+    @FXML
     public Button saveButton;
+    @FXML
     public Button addButton;
+    @FXML
     public Button editButton;
+    private boolean fieldChanged;
+    private boolean newInProcess;
+    private static Customer editCustomer;
+    private static Customer selectedCustomer;
+    private static Customer newCustomer;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         homeButton.setCancelButton(true);
         ResultSet resultSet;
+        setFieldChanged(false);
         try{
             resultSet = CustomerQuery.selectAll();
             while (resultSet.next()) {
@@ -96,62 +106,16 @@ public class CustomerController implements Initializable {
         customerTable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         //Lambda
         ListChangeListener<Customer> tableListener = change -> {
-            Customer customer = customerTable.getSelectionModel().getSelectedItem();
-            if(customer != null){
-                idField.setText(customer.getId().toString());
-                nameField.setText(customer.getName());
-                addressField.setText(customer.getAddress());
-                postalField.setText(customer.getPostal());
-                phoneField.setText(customer.getPhone());
-                countryBox.setValue(customer.getCountry());
-                regionBox.setValue(customer.getRegion());
+            setSelectedCustomer(customerTable.getSelectionModel().getSelectedItem());
+            if(!isNewInProcess() && !isFieldChanged()){
+                setFields(selectedCustomer);
+                editButton.setVisible(true);
+                addButton.setVisible(true);
+                disableFields();
             }
-            saveButton.setVisible(true);
-            editButton.setVisible(true);
-            addButton.setVisible(true);
-            disableFields();
+            else{confirmSelect();}
         };
         customerTable.getSelectionModel().getSelectedItems().addListener(tableListener);
-    }
-    public void appointmentClicked(ActionEvent actionEvent) throws IOException {
-        AppointmentController appointment = new AppointmentController();
-        appointment.open();
-        close();
-    }
-    public void homeClicked(ActionEvent actionEvent) throws IOException{
-        HomeController home = new HomeController();
-        home.open();
-        close();
-    }
-    public void open() throws IOException{
-        Parent root = FXMLLoader.load(CustomerController.class.getResource("../view/customer.fxml"));
-        Stage stage = new Stage();
-        stage.setScene(new Scene(root));
-        stage.setTitle("Customers");
-        stage.show();
-    }
-    public void close(){
-        Stage stage = (Stage) homeButton.getScene().getWindow();
-        stage.close();
-    }
-
-    public void countryChange(ActionEvent actionEvent) throws SQLException {
-        String country = countryBox.getValue();
-
-        regionBox.setItems(CustomerQuery.getDivisionList(country));
-    }
-
-    public void addClicked(ActionEvent actionEvent) {
-        checkChanges();
-        addButton.setVisible(false);
-        editButton.setVisible(false);
-        customerTable.getSelectionModel().clearSelection();
-        enableFields();
-        clearFields();
-        saveButton.setVisible(true);    }
-    //TODO: Method to check for unsaved changes
-    public void checkChanges(){
-        
     }
     public void clearFields(){
         idField.clear();
@@ -162,13 +126,24 @@ public class CustomerController implements Initializable {
         countryBox.setValue("");
         regionBox.setValue("");
     }
-    public void enableFields(){
-        nameField.setDisable(false);
-        addressField.setDisable(false);
-        postalField.setDisable(false);
-        phoneField.setDisable(false);
-        countryBox.setDisable(false);
-        regionBox.setDisable(false);
+    public void close(){
+        Stage stage = (Stage) homeButton.getScene().getWindow();
+        stage.close();
+    }
+    //TODO: Method to check for unsaved changes
+    public void confirmSelect(){
+        if (isFieldChanged() || isNewInProcess()) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Change customer without saving?");
+            alert.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.OK) {
+                    setNewInProcess(false);
+                    setFields(selectedCustomer);
+                    disableFields();
+                } else {
+                    customerTable.getSelectionModel().clearSelection();
+                }
+            });
+        }
     }
     public void disableFields(){
         nameField.setDisable(true);
@@ -178,13 +153,106 @@ public class CustomerController implements Initializable {
         countryBox.setDisable(true);
         regionBox.setDisable(true);
     }
-    public void saveClicked(ActionEvent actionEvent) {
+    public void enableFields(){
+        nameField.setDisable(false);
+        addressField.setDisable(false);
+        postalField.setDisable(false);
+        phoneField.setDisable(false);
+        countryBox.setDisable(false);
+        regionBox.setDisable(false);
+    }
+    public static Customer getEditCustomer(){
+        return editCustomer;
+    }
+    public static Customer getSelectedCustomer(){
+        return selectedCustomer;
+    }
+    public boolean isFieldChanged(){
+        return fieldChanged;
+    }
+    public boolean isNewInProcess() {
+        return newInProcess;
+    }
+    public void onAppointmentClicked(ActionEvent actionEvent) throws IOException {
+        AppointmentController appointment = new AppointmentController();
+        appointment.open();
+        close();
+    }
+    public void onHomeClicked(ActionEvent actionEvent) throws IOException{
+        HomeController home = new HomeController();
+        home.open();
+        close();
+    }
+    public void onNewClicked(ActionEvent actionEvent) {
+        if (isFieldChanged()) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Add new customer without saving?");
+            alert.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.OK) {
+                    setNewInProcess(true);
+                    customerTable.getSelectionModel().clearSelection();
+                    addButton.setVisible(false);
+                    editButton.setVisible(false);
+                    saveButton.setVisible(true);
+                    clearFields();
+                    enableFields();
+                }
+            });
+        }
+    }
+    public void open() throws IOException{
+        Parent root = FXMLLoader.load(CustomerController.class.getResource("../view/customer.fxml"));
+        Stage stage = new Stage();
+        stage.setScene(new Scene(root));
+        stage.setTitle("Customers");
+        stage.show();
+    }
+    public void onEditClicked(ActionEvent actionEvent) {
+        editButton.setVisible(false);
+        saveButton.setVisible(true);
+        enableFields();
+    }
+    public void onSaveClicked(ActionEvent actionEvent) {
         //TODO:IMPLEMENT ERROR CHECKING
         disableFields();
+        saveButton.setVisible(true);
+        editButton.setVisible(true);
+        setNewInProcess(true);
+    }
+    public void onComboBoxChanged(KeyEvent keyEvent) {
+        setFieldChanged(true);
+    }
+    public void onFieldEntered(ActionEvent actionEvent) {
+        saveCustomer();
+    }
+    private void saveCustomer() {
+        //TODO: Error Checking
+
+    }
+    public void onFieldChanged(KeyEvent keyEvent){
+        setFieldChanged(true);
+    }
+    public void setFieldChanged(boolean fieldChanged) {
+        this.fieldChanged = fieldChanged;
+    }
+    public static void setEditCustomer(Customer customer){
+        editCustomer = customer;
+    }
+    public static void setSelectedCustomer(Customer customer){
+        selectedCustomer = customer;
+    }
+    public void setFields(Customer customer){
+        if(customer != null){
+            idField.setText(customer.getId().toString());
+            nameField.setText(customer.getName());
+            addressField.setText(customer.getAddress());
+            postalField.setText(customer.getPostal());
+            phoneField.setText(customer.getPhone());
+            countryBox.setValue(customer.getCountry());
+            regionBox.setValue(customer.getRegion());
+        }
     }
 
-    public void editClicked(ActionEvent actionEvent) {
-        editButton.setVisible(false);
-        enableFields();
+    public void setNewInProcess(boolean newInProcess) {
+        this.newInProcess = newInProcess;
     }
 }

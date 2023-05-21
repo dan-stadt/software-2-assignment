@@ -1,14 +1,100 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id="appointmentWindow" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.AppointmentController">
-   <ButtonBar layoutX="200.0" layoutY="323.0" prefHeight="40.0" prefWidth="200.0">
-     <buttons>
-       <Button fx:id="customerButton" mnemonicParsing="false" onAction="#customerClicked" text="Customers" />
-         <Button fx:id="homeButton" mnemonicParsing="false" onAction="#homeClicked" text="Home" />
-     </buttons>
-   </ButtonBar>
+<AnchorPane fx:id="appointmentWindow" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.AppointmentController">
+   <TableView fx:id="appointmentTable" layoutX="34.0" layoutY="31.0">
+     <columns>
+       <TableColumn fx:id="appointmentIdColumn" minWidth="-1.0" prefWidth="75.0" text="Appt. ID" />
+       <TableColumn fx:id="titleColumn" minWidth="-1.0" prefWidth="75.0" text="Title" />
+         <TableColumn fx:id="descriptionColumn" minWidth="-1.0" prefWidth="100.0" text="Description" />
+         <TableColumn fx:id="locationColumn" prefWidth="150.0" text="Location" />
+         <TableColumn fx:id="contactColumn" minWidth="-1.0" prefWidth="100.0" text="Contact" />
+         <TableColumn fx:id="typeColumn" minWidth="-1.0" prefWidth="100.0" text="Type" />
+         <TableColumn fx:id="startsAtColumn" minWidth="-1.0" prefWidth="75.0" text="Starts at" />
+         <TableColumn fx:id="endsAtColumn" minWidth="-1.0" prefWidth="75.0" text="Ends at" />
+         <TableColumn fx:id="customerIdColumn" minWidth="-1.0" prefWidth="75.0" text="Customer ID" />
+         <TableColumn fx:id="userIdColumn" minWidth="-1.0" prefWidth="75.0" text="User ID" />
+     </columns>
+   </TableView>
+    <GridPane layoutX="961.0" layoutY="22.0" minWidth="200.0">
+        <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+        <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+        </padding>
+        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Appointments" underline="true">
+           <font>
+               <Font name="System Bold" size="12.0" />
+           </font>
+        </Text>
+        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Appointment ID" GridPane.rowIndex="1" />
+        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Title" GridPane.rowIndex="2" />
+        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Description" GridPane.rowIndex="3" />
+        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Location" GridPane.rowIndex="4" />
+        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Contact" GridPane.rowIndex="5" />
+        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Type" GridPane.rowIndex="6" />
+        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Starts at" GridPane.rowIndex="7" />
+        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Ends at" GridPane.rowIndex="8" />
+        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Customer ID" GridPane.rowIndex="9" />
+        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="User ID" GridPane.rowIndex="10" />
+        <TextField fx:id="appointmentIdField" onAction="#onFieldEntered" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+        <TextField fx:id="titleField" onAction="#onFieldEntered" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+        <TextField fx:id="descriptionField" onAction="#onFieldEntered" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+        <TextField fx:id="locationField" onAction="#onFieldEntered" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+        <TextField fx:id="contactField" onAction="#onFieldEntered" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+        <TextField fx:id="typeField" onAction="#onFieldEntered" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+        <TextField fx:id="startsAtField" onAction="#onFieldEntered" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+        <TextField fx:id="endsAtField" onAction="#onFieldEntered" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+        <TextField fx:id="customerIdField" onAction="#onFieldEntered" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+        <TextField fx:id="userIdField" onAction="#onFieldEntered" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+        <ButtonBar prefHeight="40.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="12">
+            <buttons>
+                <Button fx:id="customerButton" mnemonicParsing="false" onAction="#onCustomerClicked" text="Customers" />
+                <Button fx:id="homeButton" mnemonicParsing="false" onAction="#onHomeClicked" text="Home" />
+            </buttons>
+        </ButtonBar>
+        <ButtonBar prefHeight="40.0" prefWidth="200.0" GridPane.columnIndex="1">
+            <buttons>
+                <Button fx:id="editButton" mnemonicParsing="false" onAction="#onEditClicked" text="Edit" visible="false" />
+                <Button fx:id="newButton" mnemonicParsing="false" onAction="#onNewClicked" text="New" />
+            </buttons>
+        </ButtonBar>
+        <ButtonBar prefHeight="40.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="11">
+            <buttons>
+                <Button mnemonicParsing="false" text="Save" visible="false" />
+            </buttons>
+        </ButtonBar>
+    </GridPane>
+   <padding>
+      <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+   </padding>
 </AnchorPane>
