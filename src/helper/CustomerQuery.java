@@ -1,16 +1,20 @@
 package helper;
 
+import controller.LoginController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import main.Customer;
 import main.JDBC;
-
-import javax.xml.transform.Result;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.time.Instant;
 
 public class CustomerQuery {
+    public static boolean deleteCustomer(int customerId) throws SQLException {
+        String sql = "DELETE FROM customers WHERE Customer_ID=?;";
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ps.setInt(1, customerId);
+        return ps.executeUpdate() > 0;
+    }
     public static String getCountry(int divisionId) throws SQLException {
         ResultSet result = selectDivision(divisionId);
         int countryCode = 0;
@@ -42,17 +46,11 @@ public class CustomerQuery {
         String sql = "SELECT * FROM countries";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
         ResultSet result = ps.executeQuery();
-        ObservableList<String> countrylist = FXCollections.observableArrayList();
+        ObservableList<String> countryList = FXCollections.observableArrayList();
         while (result.next()){
-            countrylist.add(result.getString("Country"));
+            countryList.add(result.getString("Country"));
         }
-        return countrylist;
-    }
-    public static int deleteCustomer(int customerId) throws SQLException {
-        String sql = "DELETE FROM customers WHERE Customer_ID=?;";
-        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
-        ps.setInt(1, customerId);
-        return ps.executeUpdate();
+        return countryList;
     }
     public static String getDivision(int regionCode) throws SQLException {
         ResultSet result = selectDivision(regionCode);
@@ -74,20 +72,39 @@ public class CustomerQuery {
         }
         return divisionList;
     }
-    public static int insertCustomer (Customer customer) throws SQLException {
-        String sql = "INSERT INTO customers (Customer_Name, Address, Postal_Code, Phone, Division_ID) VALUES(?, ?, ?, ?, ?);";
+    public static boolean insertCustomer (Customer customer) throws SQLException {
+        String sql = "INSERT INTO customers (Customer_Name, Address, Postal_Code, Phone, Division_ID, Create_Date, Created_By, Last_Update, Last_Updated_By) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        Instant now = Instant.now();
+        Timestamp timeStamp = Timestamp.from(now);
+        String user = LoginController.getUsername();
         ps.setString(1, customer.getName());
         ps.setString(2, customer.getAddress());
         ps.setString(3, customer.getPostal());
         ps.setString(4, customer.getPhone());
         ps.setInt(5, customer.getDivisionId());
-        return ps.executeUpdate();
+        ps.setTimestamp(6, timeStamp);
+        ps.setString(7, user);
+        ps.setTimestamp(8, timeStamp);
+        ps.setString(9, user);
+        return !ps.execute();
     }
-    public static ResultSet selectAll () throws SQLException {
+    public static ObservableList<Customer> getCustomerList () throws SQLException {
         String sql = "SELECT * FROM customers";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
-        return ps.executeQuery();
+        ResultSet resultSet = ps.executeQuery();
+        ObservableList<Customer> customerList = FXCollections.observableArrayList();
+        while (resultSet.next()) {
+            int id = resultSet.getInt(1);
+            String name = resultSet.getString(2);
+            String address = resultSet.getString(3);
+            String postal = resultSet.getString(4);
+            String phone = resultSet.getString(5);
+            int regionCode = resultSet.getInt("Division_ID");
+            Customer customer = new Customer(id, name, address, postal, phone, regionCode);
+            customerList.add(customer);
+        }
+        return customerList;
     }
     public static ResultSet selectDivision(int divisionId) throws SQLException {
         String sql = "SELECT * FROM first_level_divisions WHERE Division_ID=?";
@@ -104,5 +121,20 @@ public class CustomerQuery {
             return result.getInt("Division_ID");
         }
         else{return 0;}
+    }
+    public static boolean updateCustomer(Customer customer) throws SQLException {
+        String sql = "UPDATE customers SET Customer_Name=?, Address=?, Postal_Code=?, Phone=?, Division_ID=?, Last_Update=?, Last_Updated_By=? WHERE Customer_ID=?;";
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ps.setString(1,customer.getName());
+        ps.setString(2,customer.getAddress());
+        ps.setString(3,customer.getPostal());
+        ps.setString(4,customer.getPhone());
+        ps.setInt(5,customer.getDivisionId());
+        Instant now = Instant.now();
+        Timestamp timestamp = Timestamp.from(now);
+        ps.setTimestamp(6,timestamp);
+        ps.setString(7, LoginController.getUsername());
+        ps.setInt(8, customer.getId());
+        return ps.executeUpdate() > 0;
     }
 }

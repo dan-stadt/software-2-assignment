@@ -60,7 +60,6 @@ public class Customer {
     public boolean isSafeToDelete() {
         return getAppointmentList().size() < 1;
     }
-
     public void setAppointmentList(ObservableList<Appointment> appointmentList) {
         this.appointmentList = appointmentList;
     }
