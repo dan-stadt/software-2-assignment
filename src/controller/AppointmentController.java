@@ -73,6 +73,7 @@ public class AppointmentController implements Initializable {
     public Button homeButton;
     @FXML
     public Button newButton;
+    public Button deleteButton;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -82,7 +83,10 @@ public class AppointmentController implements Initializable {
         Stage stage = (Stage) homeButton.getScene().getWindow();
         stage.close();
     }
-
+    public void isReady(){
+        //  scheduling an appointment outside of business hours defined as 8:00 a.m. to 10:00 p.m. EST, including weekends
+        //  scheduling overlapping appointments for customers
+    }
     public void onCustomerClicked(ActionEvent actionEvent) throws IOException {
         CustomerController customer = new CustomerController();
         customer.open();
@@ -105,5 +109,8 @@ public class AppointmentController implements Initializable {
         stage.setScene(new Scene(root));
         stage.setTitle("Appointments");
         stage.show();
+    }
+
+    public void onDeleteClicked(ActionEvent actionEvent) {
     }
 }

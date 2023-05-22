@@ -84,6 +84,7 @@
         </ButtonBar>
         <ButtonBar prefHeight="40.0" prefWidth="200.0" GridPane.columnIndex="1">
             <buttons>
+                <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#onDeleteClicked" text="Edit" visible="false" />
                 <Button fx:id="editButton" mnemonicParsing="false" onAction="#onEditClicked" text="Edit" visible="false" />
                 <Button fx:id="newButton" mnemonicParsing="false" onAction="#onNewClicked" text="New" />
             </buttons>

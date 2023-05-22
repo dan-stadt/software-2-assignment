@@ -12,6 +12,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
@@ -42,7 +43,7 @@ public class CustomerController implements Initializable {
     @FXML
     public Button homeButton;
     @FXML
-    public ComboBox<String> regionBox;
+    public ComboBox<String> divisionBox;
     @FXML
     public ComboBox<String> countryBox;
     @FXML
@@ -65,6 +66,7 @@ public class CustomerController implements Initializable {
     public Button addButton;
     @FXML
     public Button editButton;
+    public Button deleteButton;
     private boolean fieldChanged;
     private boolean newInProcess;
     private static Customer editCustomer;
@@ -74,10 +76,9 @@ public class CustomerController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         homeButton.setCancelButton(true);
-        ResultSet resultSet;
-        setFieldChanged(false);
+        setNewInProcess(false);
         try{
-            resultSet = CustomerQuery.selectAll();
+            ResultSet resultSet = CustomerQuery.selectAll();
             while (resultSet.next()) {
                 int id = resultSet.getInt(1);
                 String name = resultSet.getString(2);
@@ -85,9 +86,7 @@ public class CustomerController implements Initializable {
                 String postal = resultSet.getString(4);
                 String phone = resultSet.getString(5);
                 int regionCode = resultSet.getInt("Division_ID");
-                String region = CustomerQuery.getRegion(regionCode);
-                String country = CustomerQuery.getCountry(regionCode);
-                Customer customer = new Customer(id, name, country, region, address, postal, phone);
+                Customer customer = new Customer(id, name, address, postal, phone, regionCode);
                 customerList.add(customer);
                 countryBox.setItems(CustomerQuery.getCountryList());
             }
@@ -99,7 +98,7 @@ public class CustomerController implements Initializable {
         idColumn.setCellValueFactory(new PropertyValueFactory<>("Id"));
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("Name"));
         addressColumn.setCellValueFactory(new PropertyValueFactory<>("Address"));
-        regionColumn.setCellValueFactory(new PropertyValueFactory<>("Region"));
+        regionColumn.setCellValueFactory(new PropertyValueFactory<>("Division"));
         countryColumn.setCellValueFactory(new PropertyValueFactory<>("Country"));
         postalColumn.setCellValueFactory(new PropertyValueFactory<>("Postal"));
         customerTable.setItems(customerList);
@@ -111,9 +110,13 @@ public class CustomerController implements Initializable {
                 setFields(selectedCustomer);
                 editButton.setVisible(true);
                 addButton.setVisible(true);
+                deleteButton.setVisible(true);
+                saveButton.setVisible(false);
                 disableFields();
+                setFieldChanged(false);
             }
-            else{confirmSelect();}
+            else if(selectedCustomer != null){confirmSelect();
+            }
         };
         customerTable.getSelectionModel().getSelectedItems().addListener(tableListener);
     }
@@ -124,7 +127,7 @@ public class CustomerController implements Initializable {
         postalField.clear();
         phoneField.clear();
         countryBox.setValue("");
-        regionBox.setValue("");
+        divisionBox.setValue("");
     }
     public void close(){
         Stage stage = (Stage) homeButton.getScene().getWindow();
@@ -132,18 +135,20 @@ public class CustomerController implements Initializable {
     }
     //TODO: Method to check for unsaved changes
     public void confirmSelect(){
-        if (isFieldChanged() || isNewInProcess()) {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Change customer without saving?");
-            alert.showAndWait().ifPresent(response -> {
-                if (response == ButtonType.OK) {
-                    setNewInProcess(false);
-                    setFields(selectedCustomer);
-                    disableFields();
-                } else {
-                    customerTable.getSelectionModel().clearSelection();
-                }
-            });
-        }
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Change customer without saving?");
+        alert.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                setNewInProcess(false);
+                setFields(selectedCustomer);
+                addButton.setVisible(true);
+                editButton.setVisible(true);
+                saveButton.setVisible(false);
+                disableFields();
+                setFieldChanged(false);
+            } else {
+                customerTable.getSelectionModel().clearSelection();
+            }
+        });
     }
     public void disableFields(){
         nameField.setDisable(true);
@@ -151,7 +156,7 @@ public class CustomerController implements Initializable {
         postalField.setDisable(true);
         phoneField.setDisable(true);
         countryBox.setDisable(true);
-        regionBox.setDisable(true);
+        divisionBox.setDisable(true);
     }
     public void enableFields(){
         nameField.setDisable(false);
@@ -159,10 +164,19 @@ public class CustomerController implements Initializable {
         postalField.setDisable(false);
         phoneField.setDisable(false);
         countryBox.setDisable(false);
-        regionBox.setDisable(false);
+        divisionBox.setDisable(false);
     }
     public static Customer getEditCustomer(){
         return editCustomer;
+    }
+    public Customer getCustomerFields() throws SQLException {
+        String name = nameField.getText();
+        String address = addressField.getText();
+        String postal = postalField.getText();
+        String phone = phoneField.getText();
+        String division = divisionBox.getValue();
+        Customer customer = new Customer(name, address, postal, phone, division);
+        return customer;
     }
     public static Customer getSelectedCustomer(){
         return selectedCustomer;
@@ -178,6 +192,50 @@ public class CustomerController implements Initializable {
         appointment.open();
         close();
     }
+    public void onComboBoxChanged(ContextMenuEvent keyEvent) {
+        setFieldChanged(true);
+    }
+    public void onCountrySelected(ActionEvent actionEvent) throws SQLException {
+        String country = countryBox.getValue();
+        ObservableList<String> divisionList = CustomerQuery.getDivisionList(country);
+        divisionBox.setItems(divisionList);
+    }
+    public void onDeleteClicked(ActionEvent actionEvent) throws SQLException {
+        if (selectedCustomer.isSafeToDelete()){
+            int deleteId = selectedCustomer.getId();
+            int deleted = CustomerQuery.deleteCustomer(deleteId);
+            if (deleted < 1){
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Error deleting customer in database.");
+                alert.showAndWait();
+            }
+            else{
+                //TODO: Lambda for README
+                customerList.removeIf(customer -> customer.getId() == deleteId);
+                customerTable.setItems(customerList);
+            }
+        }
+        else{
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Cannot delete customer. Existing appointments found.");
+            alert.showAndWait();
+        }
+    }
+    public void onEditClicked(ActionEvent actionEvent) {
+        if (selectedCustomer != null) {
+            setEditCustomer(selectedCustomer);
+            editButton.setVisible(false);
+            saveButton.setVisible(true);
+            deleteButton.setVisible(false);
+            enableFields();
+            setFieldChanged(false);
+            setNewInProcess(false);
+        }
+    }
+    public void onFieldChanged(KeyEvent keyEvent){
+        setFieldChanged(true);
+    }
+    public void onFieldEntered(ActionEvent actionEvent) throws SQLException {
+        saveCustomer();
+    }
     public void onHomeClicked(ActionEvent actionEvent) throws IOException{
         HomeController home = new HomeController();
         home.open();
@@ -188,15 +246,12 @@ public class CustomerController implements Initializable {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Add new customer without saving?");
             alert.showAndWait().ifPresent(response -> {
                 if (response == ButtonType.OK) {
-                    setNewInProcess(true);
-                    customerTable.getSelectionModel().clearSelection();
-                    addButton.setVisible(false);
-                    editButton.setVisible(false);
-                    saveButton.setVisible(true);
-                    clearFields();
-                    enableFields();
+                    startNewCustomer();
                 }
             });
+        }
+        else{
+            startNewCustomer();
         }
     }
     public void open() throws IOException{
@@ -206,30 +261,31 @@ public class CustomerController implements Initializable {
         stage.setTitle("Customers");
         stage.show();
     }
-    public void onEditClicked(ActionEvent actionEvent) {
-        editButton.setVisible(false);
-        saveButton.setVisible(true);
-        enableFields();
-    }
-    public void onSaveClicked(ActionEvent actionEvent) {
-        //TODO:IMPLEMENT ERROR CHECKING
-        disableFields();
-        saveButton.setVisible(true);
-        editButton.setVisible(true);
-        setNewInProcess(true);
-    }
-    public void onComboBoxChanged(KeyEvent keyEvent) {
-        setFieldChanged(true);
-    }
-    public void onFieldEntered(ActionEvent actionEvent) {
+    public void onSaveClicked(ActionEvent actionEvent) throws SQLException {
         saveCustomer();
     }
-    private void saveCustomer() {
+    private void saveCustomer() throws SQLException {
         //TODO: Error Checking
-
-    }
-    public void onFieldChanged(KeyEvent keyEvent){
-        setFieldChanged(true);
+        boolean saveSuccess = false;
+        if (isNewInProcess()){
+            newCustomer = getCustomerFields();
+            CustomerQuery.insertCustomer(newCustomer);
+            customerList.add(newCustomer);
+            customerTable.setItems(customerList);
+            saveSuccess = true;
+        }
+        else if (isFieldChanged()){
+            editCustomer = getCustomerFields();
+            CustomerQuery.
+        }
+        if (saveSuccess) {
+            disableFields();
+            saveButton.setVisible(false);
+            editButton.setVisible(false);
+            deleteButton.setVisible(false);
+            setNewInProcess(false);
+            setFieldChanged(false);
+        }
     }
     public void setFieldChanged(boolean fieldChanged) {
         this.fieldChanged = fieldChanged;
@@ -248,11 +304,22 @@ public class CustomerController implements Initializable {
             postalField.setText(customer.getPostal());
             phoneField.setText(customer.getPhone());
             countryBox.setValue(customer.getCountry());
-            regionBox.setValue(customer.getRegion());
+            divisionBox.setValue(customer.getDivision());
         }
     }
-
     public void setNewInProcess(boolean newInProcess) {
         this.newInProcess = newInProcess;
+    }
+    public void startNewCustomer(){
+        customerTable.getSelectionModel().clearSelection();
+        setFieldChanged(false);
+        clearFields();
+        enableFields();
+        setNewInProcess(true);
+        addButton.setVisible(false);
+        saveButton.setVisible(true);
+        deleteButton.setVisible(false);
+        editButton.setVisible(false);
+        nameField.requestFocus();
     }
 }
