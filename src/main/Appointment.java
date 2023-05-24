@@ -1,8 +1,9 @@
 package main;
 
-import com.sun.source.tree.UsesTree;
+import helper.AppointmentQuery;
 
-import java.sql.Time;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 
 public class Appointment {
     private Integer appointmentId;
@@ -11,24 +12,26 @@ public class Appointment {
     private String location;
     private String contact;
     private String type;
-    private Time startDateTime;
-    private Time endDateTime;
+    private Timestamp start;
+    private Timestamp end;
     private Integer customerId;
-    private  Integer userId;
+    private Integer userId;
+    private Integer contactId;
 
     public Appointment(){}
-    public Appointment(Integer appointmentId, String title, String description, String location, String contact,
-                       String type, Time startDateTime, Time endDateTime, Integer customerId, Integer userId){
+    public Appointment(Integer appointmentId, String title, String description, String location,
+                       String type, Timestamp start, Timestamp end, Integer customerId,
+                       Integer userId, Integer contactId) throws SQLException {
         setAppointmentId(appointmentId);
-        setType(title);
+        setTitle(title);
         setDescription(description);
-        setContact(contact);
         setLocation(location);
         setType(type);
-        setStartDateTime(startDateTime);
-        setEndDateTime(endDateTime);
+        setStart(start);
+        setEnd(end);
         setCustomerId(customerId);
         setUserId(userId);
+        setContactId(contactId);
     }
     public Integer getAppointmentId() {
         return appointmentId;
@@ -42,11 +45,15 @@ public class Appointment {
     public String getContact() {
         return contact;
     }
+    public Integer getContactId(){return contactId;}
     public String getDescription() {
         return description;
     }
     public String getLocation() {
         return location;
+    }
+    public Timestamp getStart() {
+        return start;
     }
     public String getTitle() {
         return title;
@@ -54,8 +61,8 @@ public class Appointment {
     public String getType() {
         return type;
     }
-    public Time getEndDateTime() {
-        return endDateTime;
+    public Timestamp getEnd() {
+        return end;
     }
     public void setAppointmentId(Integer appointmentId) {
         this.appointmentId = appointmentId;
@@ -63,20 +70,23 @@ public class Appointment {
     public void setContact(String contact) {
         this.contact = contact;
     }
+    public void setContactId(Integer contactId) {
+        this.contactId = contactId;
+    }
     public void setCustomerId(Integer customerId) {
         this.customerId = customerId;
     }
     public void setDescription(String description) {
         this.description = description;
     }
-    public void setEndDateTime(Time endDateTime) {
-        this.endDateTime = endDateTime;
+    public void setEnd(Timestamp end) {
+        this.end = end;
     }
     public void setLocation(String location) {
         this.location = location;
     }
-    public void setStartDateTime(Time startDateTime) {
-        this.startDateTime = startDateTime;
+    public void setStart(Timestamp start) {
+        this.start = start;
     }
     public void setTitle(String title) {
         this.title = title;
@@ -87,4 +97,6 @@ public class Appointment {
     public void setUserId(Integer userId) {
         this.userId = userId;
     }
+
+
 }

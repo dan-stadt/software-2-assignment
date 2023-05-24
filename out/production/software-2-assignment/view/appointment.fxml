@@ -3,6 +3,9 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
@@ -16,14 +19,14 @@
 <AnchorPane fx:id="appointmentWindow" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.AppointmentController">
    <TableView fx:id="appointmentTable" layoutX="34.0" layoutY="31.0">
      <columns>
-       <TableColumn fx:id="appointmentIdColumn" minWidth="-1.0" prefWidth="75.0" text="Appt. ID" />
+       <TableColumn fx:id="appointmentIdColumn" minWidth="-1.0" prefWidth="100.0" text="Appointment ID" />
        <TableColumn fx:id="titleColumn" minWidth="-1.0" prefWidth="75.0" text="Title" />
          <TableColumn fx:id="descriptionColumn" minWidth="-1.0" prefWidth="100.0" text="Description" />
-         <TableColumn fx:id="locationColumn" prefWidth="150.0" text="Location" />
+         <TableColumn fx:id="locationColumn" prefWidth="125.0" text="Location" />
          <TableColumn fx:id="contactColumn" minWidth="-1.0" prefWidth="100.0" text="Contact" />
          <TableColumn fx:id="typeColumn" minWidth="-1.0" prefWidth="100.0" text="Type" />
-         <TableColumn fx:id="startsAtColumn" minWidth="-1.0" prefWidth="75.0" text="Starts at" />
-         <TableColumn fx:id="endsAtColumn" minWidth="-1.0" prefWidth="75.0" text="Ends at" />
+         <TableColumn fx:id="startColumn" minWidth="-1.0" prefWidth="75.0" text="Starts at" />
+         <TableColumn fx:id="endColumn" minWidth="-1.0" prefWidth="75.0" text="Ends at" />
          <TableColumn fx:id="customerIdColumn" minWidth="-1.0" prefWidth="75.0" text="Customer ID" />
          <TableColumn fx:id="userIdColumn" minWidth="-1.0" prefWidth="75.0" text="User ID" />
      </columns>
@@ -31,7 +34,7 @@
     <GridPane layoutX="961.0" layoutY="22.0" minWidth="200.0">
         <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints hgrow="SOMETIMES" />
+            <ColumnConstraints hgrow="SOMETIMES" prefWidth="275.0" />
         </columnConstraints>
         <rowConstraints>
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -66,35 +69,42 @@
         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Ends at" GridPane.rowIndex="8" />
         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Customer ID" GridPane.rowIndex="9" />
         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="User ID" GridPane.rowIndex="10" />
-        <TextField fx:id="appointmentIdField" onAction="#onFieldEntered" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+        <TextField fx:id="appointmentIdField" disable="true" onAction="#onFieldEntered" GridPane.columnIndex="1" GridPane.rowIndex="1" />
         <TextField fx:id="titleField" onAction="#onFieldEntered" GridPane.columnIndex="1" GridPane.rowIndex="2" />
         <TextField fx:id="descriptionField" onAction="#onFieldEntered" GridPane.columnIndex="1" GridPane.rowIndex="3" />
         <TextField fx:id="locationField" onAction="#onFieldEntered" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-        <TextField fx:id="contactField" onAction="#onFieldEntered" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+        <ComboBox fx:id="contactBox" prefWidth="275.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
         <TextField fx:id="typeField" onAction="#onFieldEntered" GridPane.columnIndex="1" GridPane.rowIndex="6" />
         <TextField fx:id="startsAtField" onAction="#onFieldEntered" GridPane.columnIndex="1" GridPane.rowIndex="7" />
         <TextField fx:id="endsAtField" onAction="#onFieldEntered" GridPane.columnIndex="1" GridPane.rowIndex="8" />
         <TextField fx:id="customerIdField" onAction="#onFieldEntered" GridPane.columnIndex="1" GridPane.rowIndex="9" />
         <TextField fx:id="userIdField" onAction="#onFieldEntered" GridPane.columnIndex="1" GridPane.rowIndex="10" />
-        <ButtonBar prefHeight="40.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="12">
+        <ButtonBar buttonMinWidth="73.0" GridPane.columnIndex="1" GridPane.rowIndex="12">
             <buttons>
                 <Button fx:id="customerButton" mnemonicParsing="false" onAction="#onCustomerClicked" text="Customers" />
-                <Button fx:id="homeButton" mnemonicParsing="false" onAction="#onHomeClicked" text="Home" />
+                <Button fx:id="homeButton" cancelButton="true" mnemonicParsing="false" onAction="#onHomeClicked" text="Home" />
             </buttons>
         </ButtonBar>
-        <ButtonBar prefHeight="40.0" prefWidth="200.0" GridPane.columnIndex="1">
+        <ButtonBar buttonMinWidth="73.0" GridPane.columnIndex="1">
             <buttons>
-                <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#onDeleteClicked" text="Edit" visible="false" />
+                <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#onDeleteClicked" text="Delete" visible="false" />
                 <Button fx:id="editButton" mnemonicParsing="false" onAction="#onEditClicked" text="Edit" visible="false" />
-                <Button fx:id="newButton" mnemonicParsing="false" onAction="#onNewClicked" text="New" />
+                <Button fx:id="newButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onNewClicked" text="New" />
             </buttons>
         </ButtonBar>
-        <ButtonBar prefHeight="40.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="11">
+        <ButtonBar buttonMinWidth="73.0" GridPane.columnIndex="1" GridPane.rowIndex="11">
             <buttons>
-                <Button mnemonicParsing="false" text="Save" visible="false" />
+                <Button mnemonicParsing="false" fx:id="saveButton" text="Save" visible="false" />
             </buttons>
         </ButtonBar>
     </GridPane>
+   <ButtonBar layoutX="665.0" layoutY="439.0" prefHeight="40.0" prefWidth="200.0">
+     <buttons>
+         <RadioButton fx:id="weeklyButton" mnemonicParsing="false" text="Weekly" />
+         <RadioButton fx:id="monthlyButton" mnemonicParsing="false" text="Monthly" />
+         <DatePicker showWeekNumbers="true" />
+     </buttons>
+   </ButtonBar>
    <padding>
       <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
    </padding>

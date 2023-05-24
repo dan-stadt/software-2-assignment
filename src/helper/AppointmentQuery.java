@@ -3,9 +3,11 @@ package helper;
 import controller.LoginController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import main.Appointment;
 import main.Customer;
 import main.JDBC;
 
+import javax.xml.transform.Result;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,71 +15,57 @@ import java.sql.Timestamp;
 import java.time.Instant;
 
 public class AppointmentQuery {
-    public static boolean deleteAppointment(int customerId) throws SQLException {
-        String sql = "DELETE FROM customers WHERE Customer_ID=?;";
+    public static boolean deleteAppointment(Integer appointmentId) throws SQLException {
+        String sql = "DELETE FROM appointments WHERE Appointment_ID=?;";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
-        ps.setInt(1, customerId);
+        ps.setInt(1, appointmentId);
         return ps.executeUpdate() > 0;
     }
-    public static String getCountry(int divisionId) throws SQLException {
-        ResultSet result = selectDivision(divisionId);
-        int countryCode = 0;
-        while(result.next()) {
-            countryCode = result.getInt(7);
-        }
-        String sql = "SELECT * FROM countries WHERE Country_ID=?";
+    public static ObservableList<Appointment> getAppointmentList() throws SQLException {
+        String sql = "SELECT * FROM appointments";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
-        ps.setInt(1, countryCode);
-        ResultSet countryResult = ps.executeQuery();
-        String country = null;
-        while(countryResult.next()){
-            country = countryResult.getString("Country");
+        ResultSet resultSet = ps.executeQuery();
+        ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
+        while (resultSet.next()) {
+            int appointmentId = resultSet.getInt("Appointment_ID");
+            String title = resultSet.getString("Title");
+            String description = resultSet.getString("Description");
+            String location = resultSet.getString("Location");
+            String type = resultSet.getString("Type");
+            Timestamp start = resultSet.getTimestamp("Start");
+            Timestamp end= resultSet.getTimestamp("End");
+            Integer customerID = resultSet.getInt("Customer_ID");
+            Integer userId = resultSet.getInt("User_ID");
+            Integer contactId = resultSet.getInt("Contact_ID");
+            Appointment appointment = new Appointment(appointmentId,title, description, location, type, start, end, customerID, userId, contactId);
+            appointmentList.add(appointment);
         }
-        return country;
+        resultSet.close();
+        return appointmentList;
     }
-    public static int getCountryId(String country) throws SQLException {
-        String sql = "SELECT * FROM countries WHERE Country=?";
+    public static String getcontactName(int contactId) throws SQLException {
+        String sql = "SELECT * FROM contacts WHERE Contact_ID = ?;";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
-        ps.setString(1, country);
+        ps.setInt(1, contactId);
         ResultSet result = ps.executeQuery();
-        int countryId = 0;
-        while (result.next()){
-            countryId = result.getInt("Country_ID");
+        String contact = null;
+        if (result.next()){
+            contact = result.getString("Contact_Name");
         }
-        return countryId;
+        return contact;
     }
-    public static ObservableList<String> getCountryList() throws SQLException {
-        String sql = "SELECT * FROM countries";
+    public static ObservableList<String> getContactList() throws SQLException {
+        String sql = "SELECT * FROM contacts";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
         ResultSet result = ps.executeQuery();
-        ObservableList<String> countryList = FXCollections.observableArrayList();
+        ObservableList<String> contactList = FXCollections.observableArrayList();
         while (result.next()){
-            countryList.add(result.getString("Country"));
+            contactList.add(result.getString("Contact_Name"));
         }
-        return countryList;
+        return contactList;
     }
-    public static String getDivision(int regionCode) throws SQLException {
-        ResultSet result = selectDivision(regionCode);
-        String region = null;
-        while(result.next()){
-            region = result.getString("Division");
-        }
-        return region;
-    }
-    public static ObservableList<String> getDivisionList(String country) throws SQLException {
-        int countryCode = getCountryId(country);
-        String sql = "SELECT * FROM first_level_divisions WHERE Country_ID = ?";
-        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
-        ps.setInt(1, countryCode);
-        ResultSet result = ps.executeQuery();
-        ObservableList<String> divisionList = FXCollections.observableArrayList();
-        while (result.next()){
-            divisionList.add(result.getString("Division"));
-        }
-        return divisionList;
-    }
-    public static boolean insertCustomer (Customer customer) throws SQLException {
-        String sql = "INSERT INTO customers (Customer_Name, Address, Postal_Code, Phone, Division_ID, Create_Date, Created_By, Last_Update, Last_Updated_By) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);";
+    public static boolean insertAppointment (Customer customer) throws SQLException {
+        String sql = "INSERT INTO appointments (Customer_Name, Address, Postal_Code, Phone, Division_ID, Create_Date, Created_By, Last_Update, Last_Updated_By) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
         Instant now = Instant.now();
         Timestamp timeStamp = Timestamp.from(now);
@@ -93,33 +81,8 @@ public class AppointmentQuery {
         ps.setString(9, user);
         return !ps.execute();
     }
-    public static ObservableList<Customer> getCustomerList () throws SQLException {
-        String sql = "SELECT * FROM customers";
-        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
-        ResultSet resultSet = ps.executeQuery();
-        ObservableList<Customer> customerList = FXCollections.observableArrayList();
-        while (resultSet.next()) {
-            int id = resultSet.getInt(1);
-            String name = resultSet.getString(2);
-            String address = resultSet.getString(3);
-            String postal = resultSet.getString(4);
-            String phone = resultSet.getString(5);
-            int regionCode = resultSet.getInt("Division_ID");
-            Customer customer = new Customer(id, name, address, postal, phone, regionCode);
-            customerList.add(customer);
-        }
-        return customerList;
-    }
-    public static ResultSet selectDivision(int divisionId) throws SQLException {
-        String sql = "SELECT * FROM first_level_divisions WHERE Division_ID=?";
-        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
-        ps.setInt(1, divisionId);
-        return ps.executeQuery();
-    }
+    /*
     public static int getDivisionId (String division) throws SQLException {
-        String sql = "SELECT * FROM first_level_divisions WHERE Division=?;";
-        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
-        ps.setString(1, division);
         ResultSet result = ps.executeQuery();
         if(result.next()){
             return result.getInt("Division_ID");
@@ -140,5 +103,5 @@ public class AppointmentQuery {
         ps.setString(7, LoginController.getUsername());
         ps.setInt(8, customer.getId());
         return ps.executeUpdate() > 0;
-    }
+*/
 }

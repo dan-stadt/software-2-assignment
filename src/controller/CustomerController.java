@@ -207,7 +207,7 @@ public class CustomerController implements Initializable {
         }
     }
     public void onFieldEntered(ActionEvent actionEvent) throws SQLException {
-        saveCustomer();
+        saveButton.fire();
     }
     public void onHomeClicked(ActionEvent actionEvent) throws IOException{
         HomeController home = new HomeController();
@@ -225,17 +225,7 @@ public class CustomerController implements Initializable {
             startNewCustomer();
         }
     }
-    public void open() throws IOException{
-        Parent root = FXMLLoader.load(CustomerController.class.getResource("../view/customer.fxml"));
-        Stage stage = new Stage();
-        stage.setScene(new Scene(root));
-        stage.setTitle("Customers");
-        stage.show();
-    }
     public void onSaveClicked(ActionEvent actionEvent) throws SQLException {
-        saveCustomer();
-    }
-    private void saveCustomer() throws SQLException {
         boolean saveSuccess = false;
         editCustomer = getCustomerFields();
         if(!isFormComplete()){
@@ -249,6 +239,8 @@ public class CustomerController implements Initializable {
             alert.showAndWait();
         }
         if (saveSuccess) {
+            setEditInProcess(false);
+            setNewInProcess(false);
             customerList = CustomerQuery.getCustomerList();
             customerTable.setItems(customerList);
             customerTable.getSelectionModel().clearSelection();
@@ -258,9 +250,14 @@ public class CustomerController implements Initializable {
             editButton.setVisible(false);
             deleteButton.setVisible(false);
             addButton.setVisible(true);
-            setEditInProcess(false);
-            setNewInProcess(false);
         }
+    }
+    public void open() throws IOException{
+        Parent root = FXMLLoader.load(CustomerController.class.getResource("../view/customer.fxml"));
+        Stage stage = new Stage();
+        stage.setScene(new Scene(root));
+        stage.setTitle("Customers");
+        stage.show();
     }
     public void setEditInProcess(boolean fieldChanged) {
         this.editInProcess = fieldChanged;
