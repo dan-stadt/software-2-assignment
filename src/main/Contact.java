@@ -10,6 +10,8 @@ public class Contact {
     private String contactName;
     private String email;
 
+    public Contact() { }
+
     public int getContactId() {
         return contactId;
     }

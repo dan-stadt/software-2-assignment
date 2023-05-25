@@ -4,10 +4,8 @@ import controller.LoginController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import main.Appointment;
-import main.Customer;
+import main.Contact;
 import main.JDBC;
-
-import javax.xml.transform.Result;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -54,31 +52,41 @@ public class AppointmentQuery {
         }
         return contact;
     }
-    public static ObservableList<String> getContactList() throws SQLException {
+    public static ObservableList<Contact> getContactList() throws SQLException {
         String sql = "SELECT * FROM contacts";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
         ResultSet result = ps.executeQuery();
-        ObservableList<String> contactList = FXCollections.observableArrayList();
+        ObservableList<Contact> contactList = FXCollections.observableArrayList();
         while (result.next()){
-            contactList.add(result.getString("Contact_Name"));
+            String contactName = result.getString("Contact_Name");
+            Integer contactId = result.getInt("Contact_Id");
+            String email = result.getString("Email");
+            Contact contact = new Contact(contactId, contactName, email);
+            contactList.add(contact);
         }
         return contactList;
     }
-    public static boolean insertAppointment (Customer customer) throws SQLException {
-        String sql = "INSERT INTO appointments (Customer_Name, Address, Postal_Code, Phone, Division_ID, Create_Date, Created_By, Last_Update, Last_Updated_By) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);";
+    public static boolean insertAppointment (Appointment appointment) throws SQLException {
+        String sql = "INSERT INTO appointments (Title, Description, Location, Type, Start, End," +
+                "Create_Date, Created_By, Last_Update, Last_Updated_By, Customer_ID, User_ID, Contact_ID) " +
+                "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
         Instant now = Instant.now();
         Timestamp timeStamp = Timestamp.from(now);
         String user = LoginController.getUsername();
-        ps.setString(1, customer.getName());
-        ps.setString(2, customer.getAddress());
-        ps.setString(3, customer.getPostal());
-        ps.setString(4, customer.getPhone());
-        ps.setInt(5, customer.getDivisionId());
-        ps.setTimestamp(6, timeStamp);
-        ps.setString(7, user);
-        ps.setTimestamp(8, timeStamp);
-        ps.setString(9, user);
+        ps.setString(1, appointment.getTitle());
+        ps.setString(2, appointment.getDescription());
+        ps.setString(3, appointment.getLocation());
+        ps.setString(4, appointment.getType());
+        ps.setTimestamp(5, appointment.getStartTimestamp());
+        ps.setTimestamp(6, appointment.getEndTimestamp());
+        ps.setTimestamp(7, timeStamp);
+        ps.setString(8, user);
+        ps.setTimestamp(9, timeStamp);
+        ps.setString(10, user);
+        ps.setInt(11, appointment.getCustomerId());
+        ps.setInt(12, appointment.getUserId());
+        ps.setInt(13, appointment.getContactId());
         return !ps.execute();
     }
     /*

@@ -16,18 +16,55 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import main.Appointment;
+import main.Contact;
+
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.sql.Time;
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 public class AppointmentController implements Initializable {
     @FXML
     public AnchorPane appointmentWindow;
     @FXML
-    public TableView<Appointment> appointmentTable;
+    public Button customerButton;
+    @FXML
+    public Button editButton;
+    @FXML
+    public Button homeButton;
+    @FXML
+    public Button newButton;
+    @FXML
+    public Button deleteButton;
+    @FXML
+    public Button saveButton;
+    @FXML
+    public ComboBox<String> contactBox;
+    @FXML
+    public ComboBox<String> endHourBox;
+    @FXML
+    public ComboBox<String> endMinuteBox;
+    @FXML
+    public ComboBox<String> startHourBox;
+    @FXML
+    public ComboBox<String> startMinuteBox;
+    @FXML
+    public DatePicker startDatePicker;
+    @FXML
+    public DatePicker endDatePicker;
+    @FXML
+    public DatePicker tableDatePicker;
+    @FXML
+    public RadioButton weeklyButton;
+    @FXML
+    public RadioButton monthlyButton;
     @FXML
     public TableColumn<Appointment, Integer> appointmentIdColumn;
     @FXML
@@ -35,7 +72,6 @@ public class AppointmentController implements Initializable {
     @FXML
     public TableColumn<Appointment, String> descriptionColumn;
     @FXML
-    //TODO: Update to have date/time
     public TableColumn<Appointment, Locale> locationColumn;
     @FXML
     public TableColumn<Appointment, String> contactColumn;
@@ -60,58 +96,53 @@ public class AppointmentController implements Initializable {
     @FXML
     public TextField typeField;
     @FXML
-    public TextField startsAtField;
-    @FXML
-    public TextField endsAtField;
-    @FXML
     public TextField customerIdField;
     @FXML
     public TextField userIdField;
     @FXML
-    public Button customerButton;
-    @FXML
-    public Button editButton;
-    @FXML
-    public Button homeButton;
-    @FXML
-    public Button newButton;
-    @FXML
-    public Button deleteButton;
-    @FXML
-    public Button saveButton;
-    @FXML
-    public ComboBox<String> contactBox;
-    public RadioButton weeklyButton;
-    public RadioButton monthlyButton;
-    private ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
+    public TableView<Appointment> appointmentTable;
+
     private Appointment selectedAppointment;
     private boolean newInProcess;
     private boolean editInProcess;
-
+    private ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
+    private ObservableList<Contact> contactList = FXCollections.observableArrayList();
+    private static final ObservableList<String> minutes = FXCollections.observableArrayList("00", "15", "30", "45");
+    private static final ObservableList<String> hours = FXCollections.observableArrayList(
+            "00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11",
+            "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23");
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         homeButton.setCancelButton(true);
         setDisableFields(true);
-        try{
-            appointmentList = AppointmentQuery.getAppointmentList();
-            for (Appointment appointment: appointmentList) {
-                int contactId = appointment.getContactId();
-                String contactName = AppointmentQuery.getcontactName(contactId);
-                appointment.setContact(contactName);
+        try {
+            contactList = AppointmentQuery.getContactList();
+            refreshAppointmentTable();
+            for (Appointment appointment : appointmentList){
+                String contactName = getContactNameFromId(appointment.getContactId());
+                appointment.setContactName(contactName);
             }
-            contactBox.setItems(AppointmentQuery.getContactList());
+            //TODO: Lambda README
+            contactBox.setItems(FXCollections.observableArrayList(contactList.stream()
+                    .map(Contact :: getContactName)
+                    .collect(Collectors.toList()
+            )));
         }catch (SQLException e){
             Alert alert = new Alert(Alert.AlertType.ERROR, "Error loading appointments.");
             alert.showAndWait();
         }
+        endHourBox.setItems(hours);
+        endMinuteBox.setItems(minutes);
+        startHourBox.setItems(hours);
+        startMinuteBox.setItems(minutes);
         appointmentIdColumn.setCellValueFactory(new PropertyValueFactory<>("AppointmentId"));
         titleColumn.setCellValueFactory(new PropertyValueFactory<>("Title"));
         descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("Description"));
         locationColumn.setCellValueFactory(new PropertyValueFactory<>("Location"));
-        contactColumn.setCellValueFactory(new PropertyValueFactory<>("Contact"));
+        contactColumn.setCellValueFactory(new PropertyValueFactory<>("ContactName"));
         typeColumn.setCellValueFactory(new PropertyValueFactory<>("Type"));
-        startColumn.setCellValueFactory(new PropertyValueFactory<>("Start"));
-        endColumn.setCellValueFactory(new PropertyValueFactory<>("End"));
+        startColumn.setCellValueFactory(new PropertyValueFactory<>("StartDateTime"));
+        endColumn.setCellValueFactory(new PropertyValueFactory<>("EndDateTime"));
         customerIdColumn.setCellValueFactory(new PropertyValueFactory<>("CustomerId"));
         userIdColumn.setCellValueFactory(new PropertyValueFactory<>("UserId"));
         appointmentTable.setItems(appointmentList);
@@ -132,37 +163,77 @@ public class AppointmentController implements Initializable {
         appointmentTable.getSelectionModel().getSelectedItems().addListener(tableListener);
     }
     private void clearFields() {
-        appointmentIdField.setText("");
-        titleField.setText("");
-        descriptionField.setText("");
-        locationField.setText("");
-        contactBox.setValue("");
-        typeField.setText("");
-        startsAtField.setText("");
-        endsAtField.setText("");
-        customerIdField.setText("");
-        userIdField.setText("");
+        appointmentIdField.clear();
+        titleField.clear();
+        descriptionField.clear();
+        locationField.clear();
+        contactBox.setValue(null);
+        typeField.clear();
+        startDatePicker.setValue(null );
+        startHourBox.setValue(null);
+        startDatePicker.setValue(null);
+        endDatePicker.setValue(null);
+        endHourBox.setValue(null);
+        endMinuteBox.setValue(null);
+        customerIdField.setText(null);
+        userIdField.setText(null);
     }
-    private void confirmSelect() {
-        //TODO: Write method
-    }
-    private void setDisableFields(boolean disable){
-        titleField.setDisable(disable);
-        descriptionField.setDisable(disable);
-        locationField.setDisable(disable);
-        contactBox.setDisable(disable);
-        typeField.setDisable(disable);
-        startsAtField.setDisable(disable);
-        endsAtField.setDisable(disable);
-        customerIdField.setDisable(disable);
-        userIdField.setDisable(disable);
-    }
-    private boolean isEditInProcess() {return editInProcess;}
-    private boolean isNewInProcess() {return newInProcess;}
     public void close() {
         Stage stage = (Stage) homeButton.getScene().getWindow();
         stage.close();
     }
+    private void confirmSelect() {
+    Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Change appointment without saving?");
+    alert.showAndWait().ifPresent(response ->{
+            if ( response == ButtonType.OK){ setFields(); }
+        });
+
+    }
+    public Integer getContactIdFromName(String contactName){
+        for (Contact contact : contactList){
+            if (contact.getContactName().equals(contactName)){
+                return contact.getContactId();
+            }
+        }
+        return null;
+    }
+    public String getContactNameFromId(Integer contactId){
+        for (Contact contact : contactList){
+            if (contactId.equals(contact.getContactId())){
+                return  contact.getContactName();
+            }
+        }
+        return null;
+    }
+    public Appointment getAppointmentFromFields() throws SQLException {
+        Integer appointmentId = Integer.getInteger(appointmentIdField.getText());
+        String title = titleField.getText();
+        String description = descriptionField.getText();
+        String location = locationField.getText();
+        String contactName = contactBox.getValue();
+        Integer contactId = getContactIdFromName(contactName);
+        String type = typeField.getText();
+        LocalDate startDate = startDatePicker.getValue();
+        int startHour = Integer.parseInt(startHourBox.getValue());
+        int startMinute = Integer.parseInt(startMinuteBox.getValue());
+        LocalTime startTime = LocalTime.of(startHour, startMinute);
+        LocalDateTime startLocalDateTime = LocalDateTime.of(startDate, startTime);
+        Timestamp start = Timestamp.valueOf(startLocalDateTime);
+        LocalDate endDate = endDatePicker.getValue();
+        int endHour = Integer.parseInt(endHourBox.getValue());
+        int endMinute = Integer.parseInt(endMinuteBox.getValue());
+        LocalTime endTime= LocalTime.of(endHour, endMinute);
+        LocalDateTime endDateTime = LocalDateTime.of(endDate, endTime);
+        Timestamp end = Timestamp.valueOf(endDateTime);
+        Integer customerId= Integer.parseInt(customerIdField.getText());
+        Integer userId= Integer.parseInt(userIdField.getText());
+        Appointment appointment = new Appointment(appointmentId, title, description, location, type,
+                start, end, customerId, userId, contactId);
+        appointment.setContactName(contactName);
+        return appointment;
+    }
+    private boolean isEditInProcess() {return editInProcess;}
+    private boolean isNewInProcess() {return newInProcess;}
     public void isReady(){
         //  scheduling an appointment outside of business hours defined as 8:00 a.m. to 10:00 p.m. EST, including weekends
         //  scheduling overlapping appointments for customers
@@ -171,6 +242,18 @@ public class AppointmentController implements Initializable {
         CustomerController customer = new CustomerController();
         customer.open();
         close();
+    }
+    public void onDeleteClicked(ActionEvent actionEvent) throws SQLException {
+        String type = selectedAppointment.getType();
+        if (AppointmentQuery.deleteAppointment(selectedAppointment.getAppointmentId())){
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, type + " Appointment deleted.");
+            alert.showAndWait();
+            refreshAppointmentTable();
+        }
+        else{
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Unable to delete appointment.");
+            alert.showAndWait();
+        }
     }
     public void onEditClicked(ActionEvent actionEvent) {
         setDisableFields(false);
@@ -191,16 +274,13 @@ public class AppointmentController implements Initializable {
         setDisableFields(false);
         setNewInProcess(true);
     }
-    public void onDeleteClicked(ActionEvent actionEvent) throws SQLException {
-        String type = selectedAppointment.getType();
-        if (AppointmentQuery.deleteAppointment(selectedAppointment.getAppointmentId())){
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, type + " Appointment deleted.");
-            alert.showAndWait();
+    public void onSaveClicked(ActionEvent actionEvent) throws SQLException {
+        if (isNewInProcess()){
+            Appointment appointment = getAppointmentFromFields();
+            AppointmentQuery.insertAppointment(appointment);
+            setNewInProcess(false);
         }
-        else{
-            Alert alert = new Alert(Alert.AlertType.ERROR, "Unable to delete appointment.");
-            alert.showAndWait();
-        }
+        refreshAppointmentTable();
     }
     public void open() throws IOException {
         Parent root = FXMLLoader.load(AppointmentController.class.getResource("../view/appointment.fxml"));
@@ -209,25 +289,48 @@ public class AppointmentController implements Initializable {
         stage.setTitle("Appointments");
         stage.show();
     }
-    public void setSelectedAppointment(Appointment selectedAppointment) {
-        this.selectedAppointment = selectedAppointment;
+    public void refreshAppointmentTable() throws SQLException {
+        appointmentList = AppointmentQuery.getAppointmentList();
+        appointmentTable.setItems(appointmentList);
+    }
+    public void setDisableFields(boolean disable){
+        titleField.setDisable(disable);
+        descriptionField.setDisable(disable);
+        locationField.setDisable(disable);
+        contactBox.setDisable(disable);
+        typeField.setDisable(disable);
+        startDatePicker.setDisable(disable);
+        startHourBox.setDisable(disable);
+        startMinuteBox.setDisable(disable);
+        endDatePicker.setDisable(disable);
+        endHourBox.setDisable(disable);
+        endMinuteBox.setDisable(disable);
+        customerIdField.setDisable(disable);
+        userIdField.setDisable(disable);
     }
     public void setEditInProcess(boolean editInProcess) {
         this.editInProcess = editInProcess;
     }
-    private void setFields() {
+    public void setFields() {
         appointmentIdField.setText(selectedAppointment.getAppointmentId().toString());
         titleField.setText(selectedAppointment.getTitle());
         descriptionField.setText(selectedAppointment.getDescription());
         locationField.setText(selectedAppointment.getLocation());
-        contactBox.setValue(selectedAppointment.getContact());
+        contactBox.setValue(selectedAppointment.getContactName());
         typeField.setText(selectedAppointment.getType());
-        startsAtField.setText(selectedAppointment.getStart().toString());
-        endsAtField.setText(selectedAppointment.getEnd().toString());
+        startDatePicker.setValue(selectedAppointment.getStartTimestamp().toLocalDateTime().toLocalDate());
+        startHourBox.setValue(selectedAppointment.getStartHour());
+        startMinuteBox.setValue(selectedAppointment.getStartMinute());
+        endDatePicker.setValue(selectedAppointment.getEndDate());
+        endHourBox.setValue(selectedAppointment.getEndHour());
+        endMinuteBox.setValue(selectedAppointment.getEndMinute());
         customerIdField.setText(selectedAppointment.getCustomerId().toString());
         userIdField.setText(selectedAppointment.getUserId().toString());
     }
     public void setNewInProcess(boolean newInProcess) {
         this.newInProcess = newInProcess;
+    }
+    public void setSelectedAppointment(Appointment selectedAppointment) {
+        this.selectedAppointment = selectedAppointment;
     }
 }
