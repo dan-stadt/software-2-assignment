@@ -85,7 +85,7 @@
         <TextField fx:id="typeField" maxWidth="255.0" onAction="#onFieldEntered" GridPane.columnIndex="1" GridPane.rowIndex="6" />
       <ButtonBar buttonMinWidth="55.0" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="7">
         <buttons>
-            <DatePicker fx:id="startDatePicker"/>
+            <DatePicker fx:id="startDatePicker" />
             <ComboBox fx:id="startHourBox" maxWidth="55.0" />
             <ComboBox fx:id="startMinuteBox" maxWidth="55.0" />
         </buttons>
@@ -104,7 +104,7 @@
         </ButtonBar>
       <ButtonBar buttonMinWidth="55.0" prefHeight="40.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="8" GridPane.valignment="CENTER">
         <buttons>
-            <DatePicker fx:id="endDatePicker"/>
+            <DatePicker fx:id="endDatePicker" />
             <ComboBox fx:id="endHourBox" maxWidth="55.0" />
             <ComboBox fx:id="endMinuteBox" maxWidth="55.0" />
         </buttons>
@@ -115,11 +115,12 @@
         </buttons>
       </ButtonBar>
     </GridPane>
-   <ButtonBar layoutX="665.0" layoutY="439.0" prefHeight="40.0" prefWidth="200.0">
+   <ButtonBar buttonMinWidth="50.0" layoutX="571.0" layoutY="442.0" prefHeight="40.0">
      <buttons>
-         <RadioButton fx:id="weeklyButton" mnemonicParsing="false" text="Weekly" />
-         <RadioButton fx:id="monthlyButton" mnemonicParsing="false" text="Monthly" />
-         <DatePicker fx:id="tableDatePicker" showWeekNumbers="true" />
+         <RadioButton fx:id="allButton" maxWidth="50.0" mnemonicParsing="false" onAction="#onAllClicked" text="All" />
+         <DatePicker fx:id="tableDatePicker" maxWidth="125.0" onAction="#onTableDatePicker" showWeekNumbers="true" />
+         <RadioButton fx:id="weeklyButton" maxWidth="70.0" mnemonicParsing="false" onAction="#onWeeklyClicked" text="Weekly" />
+         <RadioButton fx:id="monthlyButton" maxWidth="70.0" mnemonicParsing="false" onAction="#onMonthlyClicked" text="Monthly" />
      </buttons>
    </ButtonBar>
    <padding>

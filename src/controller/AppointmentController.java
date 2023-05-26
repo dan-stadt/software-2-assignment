@@ -17,7 +17,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import main.Appointment;
 import main.Contact;
-
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -26,6 +25,7 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.InputMismatchException;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
@@ -101,7 +101,8 @@ public class AppointmentController implements Initializable {
     public TextField userIdField;
     @FXML
     public TableView<Appointment> appointmentTable;
-
+    public RadioButton allButton;
+    ToggleGroup toggleGroup = new ToggleGroup();
     private Appointment selectedAppointment;
     private boolean newInProcess;
     private boolean editInProcess;
@@ -115,6 +116,10 @@ public class AppointmentController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         homeButton.setCancelButton(true);
         setDisableFields(true);
+        allButton.setToggleGroup(toggleGroup);
+        weeklyButton.setToggleGroup(toggleGroup);
+        monthlyButton.setToggleGroup(toggleGroup);
+        allButton.fire();
         try {
             contactList = AppointmentQuery.getContactList();
             refreshAppointmentTable();
@@ -205,7 +210,7 @@ public class AppointmentController implements Initializable {
         }
         return null;
     }
-    public Appointment getAppointmentFromFields() throws SQLException {
+    public Appointment getAppointmentFromFields() {
         Integer appointmentId = Integer.getInteger(appointmentIdField.getText());
         String title = titleField.getText();
         String description = descriptionField.getText();
@@ -238,6 +243,11 @@ public class AppointmentController implements Initializable {
         //  scheduling an appointment outside of business hours defined as 8:00 a.m. to 10:00 p.m. EST, including weekends
         //  scheduling overlapping appointments for customers
     }
+    public void onAllClicked(ActionEvent actionEvent) throws SQLException {
+        appointmentList = AppointmentQuery.getAppointmentList();
+        refreshAppointmentTable();
+    }
+
     public void onCustomerClicked(ActionEvent actionEvent) throws IOException {
         CustomerController customer = new CustomerController();
         customer.open();
@@ -249,6 +259,7 @@ public class AppointmentController implements Initializable {
             Alert alert = new Alert(Alert.AlertType.INFORMATION, type + " Appointment deleted.");
             alert.showAndWait();
             refreshAppointmentTable();
+            clearFields();
         }
         else{
             Alert alert = new Alert(Alert.AlertType.ERROR, "Unable to delete appointment.");
@@ -258,12 +269,18 @@ public class AppointmentController implements Initializable {
     public void onEditClicked(ActionEvent actionEvent) {
         setDisableFields(false);
         setEditInProcess(true);
+        saveButton.setVisible(true);
+        editButton.setVisible(false);
     }
     public void onFieldEntered(ActionEvent actionEvent) {saveButton.fire();}
     public void onHomeClicked(ActionEvent actionEvent) throws IOException {
         HomeController home = new HomeController();
         home.open();
         close();
+    }
+    public void onMonthlyClicked(ActionEvent actionEvent) throws SQLException {
+        appointmentList = AppointmentQuery.getMonthlyAppointments(tableDatePicker);
+        refreshAppointmentTable();
     }
     public void onNewClicked(ActionEvent actionEvent) {
         clearFields();
@@ -275,11 +292,41 @@ public class AppointmentController implements Initializable {
         setNewInProcess(true);
     }
     public void onSaveClicked(ActionEvent actionEvent) throws SQLException {
-        if (isNewInProcess()){
+        boolean saveSuccess = false;
+        try {
             Appointment appointment = getAppointmentFromFields();
-            AppointmentQuery.insertAppointment(appointment);
-            setNewInProcess(false);
+            if (isNewInProcess()){
+                saveSuccess = AppointmentQuery.insertAppointment(appointment);
+                setNewInProcess(false);
+            }
+            else if (isEditInProcess()){
+                appointment.setAppointmentId(Integer.parseInt(appointmentIdField.getText()));
+                saveSuccess = AppointmentQuery.updateAppointment(appointment);
+                setEditInProcess(false);
+            }
+            refreshAppointmentTable();
         }
+        catch (InputMismatchException e) {saveSuccess = false; }
+        Alert alert;
+        if (saveSuccess){
+            alert = new Alert(Alert.AlertType.INFORMATION, "Appointment updated successfully.");
+
+        }
+        else alert = new Alert(Alert.AlertType.ERROR, "Confirm all fields entered properly");
+        alert.showAndWait();
+    }
+    public void onTableDatePicker(ActionEvent actionEvent) throws SQLException {
+        if (weeklyButton.isSelected()) {
+            weeklyButton.setSelected(false);
+            weeklyButton.fire();
+        }
+        else if (monthlyButton.isSelected()){
+            monthlyButton.setSelected(false);
+            monthlyButton.fire();
+        }
+    }
+    public void onWeeklyClicked(ActionEvent actionEvent) throws SQLException {
+        appointmentList = AppointmentQuery.getWeeklyAppointments(tableDatePicker);
         refreshAppointmentTable();
     }
     public void open() throws IOException {
@@ -290,8 +337,17 @@ public class AppointmentController implements Initializable {
         stage.show();
     }
     public void refreshAppointmentTable() throws SQLException {
-        appointmentList = AppointmentQuery.getAppointmentList();
+        if (allButton.isSelected()) {
+            appointmentList = AppointmentQuery.getAppointmentList();
+        }
+        else if (weeklyButton.isSelected()){
+            appointmentList = AppointmentQuery.getWeeklyAppointments(tableDatePicker);
+        }
+        else if (monthlyButton.isSelected()){
+            appointmentList = AppointmentQuery.getMonthlyAppointments(tableDatePicker);
+        }
         appointmentTable.setItems(appointmentList);
+
     }
     public void setDisableFields(boolean disable){
         titleField.setDisable(disable);
