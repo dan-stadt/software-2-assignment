@@ -17,21 +17,21 @@
 <?import javafx.scene.text.Text?>
 
 <AnchorPane fx:id="appointmentWindow" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.AppointmentController">
-   <TableView fx:id="appointmentTable" layoutX="34.0" layoutY="31.0">
+   <TableView fx:id="appointmentTable" layoutX="45.0" layoutY="42.0">
      <columns>
        <TableColumn fx:id="appointmentIdColumn" minWidth="-1.0" prefWidth="100.0" text="Appointment ID" />
        <TableColumn fx:id="titleColumn" minWidth="-1.0" prefWidth="75.0" text="Title" />
          <TableColumn fx:id="descriptionColumn" minWidth="-1.0" prefWidth="100.0" text="Description" />
-         <TableColumn fx:id="locationColumn" prefWidth="125.0" text="Location" />
+         <TableColumn fx:id="locationColumn" prefWidth="100.0" text="Location" />
          <TableColumn fx:id="contactColumn" minWidth="-1.0" prefWidth="100.0" text="Contact" />
          <TableColumn fx:id="typeColumn" minWidth="-1.0" prefWidth="100.0" text="Type" />
-         <TableColumn fx:id="startColumn" minWidth="-1.0" prefWidth="75.0" text="Starts at" />
-         <TableColumn fx:id="endColumn" minWidth="-1.0" prefWidth="75.0" text="Ends at" />
+         <TableColumn fx:id="startColumn" minWidth="-1.0" prefWidth="110.0" text="Starts at" />
+         <TableColumn fx:id="endColumn" minWidth="-1.0" prefWidth="110.0" text="Ends at" />
          <TableColumn fx:id="customerIdColumn" minWidth="-1.0" prefWidth="75.0" text="Customer ID" />
-         <TableColumn fx:id="userIdColumn" minWidth="-1.0" prefWidth="75.0" text="User ID" />
+         <TableColumn fx:id="userIdColumn" minWidth="-1.0" prefWidth="60.0" text="User ID" />
      </columns>
    </TableView>
-    <GridPane layoutX="961.0" layoutY="22.0" minWidth="200.0">
+    <GridPane layoutX="977.0" layoutY="22.0" minWidth="200.0">
         <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" prefWidth="275.0" />
@@ -114,7 +114,7 @@
         </buttons>
       </ButtonBar>
     </GridPane>
-   <ButtonBar buttonMinWidth="50.0" layoutX="571.0" layoutY="442.0" prefHeight="40.0">
+   <ButtonBar buttonMinWidth="50.0" layoutX="579.0" layoutY="458.0" prefHeight="40.0">
      <buttons>
          <RadioButton fx:id="allButton" maxWidth="50.0" mnemonicParsing="false" onAction="#onAllClicked" text="All" />
          <DatePicker fx:id="tableDatePicker" maxWidth="125.0" onAction="#onTableDatePicker" showWeekNumbers="true" />

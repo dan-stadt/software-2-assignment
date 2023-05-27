@@ -59,9 +59,13 @@ public class LoginController implements Initializable {
     public static String getUsername(){
         return username;
     }
-    public void enterClick(ActionEvent actionEvent) throws SQLException {loginCheck();}
-    public void enterPassword(ActionEvent actionEvent) throws SQLException {loginCheck();}
-    public void enterUsername(ActionEvent actionEvent) throws SQLException {loginCheck();}
+    public void close(){
+        Stage stage = (Stage) loginWindow.getScene().getWindow();
+        stage.close();
+    }
+    public void exitClick(ActionEvent actionEvent) {
+        close();
+    }
     public void loginCheck() throws SQLException {
         File loginFile = new File("login_activity.txt");
         username = usernameField.getText();
@@ -87,13 +91,8 @@ public class LoginController implements Initializable {
             ioError.showAndWait();
         }
     }
-    public void exitClick(ActionEvent actionEvent) {
-        close();
-    }
-    public void close(){
-        Stage stage = (Stage) loginWindow.getScene().getWindow();
-        stage.close();
-    }
+    public void onEnterClicked(ActionEvent actionEvent) throws SQLException {loginCheck();}
+    public void onFieldEntered(ActionEvent actionEvent) throws SQLException {loginCheck();}
     public void open() throws IOException{
         Stage stage = new Stage();
         Parent root = FXMLLoader.load(LoginController.class.getResource("../view/login.fxml"));

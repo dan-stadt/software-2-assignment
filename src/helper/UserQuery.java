@@ -15,4 +15,12 @@ public class UserQuery {
         ResultSet results = ps.executeQuery();
         return results.next();
     }
+    public static int getUserId(String userName) throws SQLException {
+        String sql ="SELECT * FROM users WHERE User_Name = ?";
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ps.setString(1, userName);
+        ResultSet resultSet = ps.executeQuery();
+        resultSet.next();
+        return resultSet.getInt("User_ID");
+    }
 }

@@ -206,7 +206,8 @@ public class AppointmentController implements Initializable {
         return null;
     }
     public Appointment getAppointmentFromFields() {
-        Integer appointmentId = Integer.parseInt(appointmentIdField.getText());
+        int appointmentId = 0;
+        if (isEditInProcess()) appointmentId = Integer.parseInt(appointmentIdField.getText());
         String title = titleField.getText();
         String description = descriptionField.getText();
         String location = locationField.getText();
@@ -233,10 +234,6 @@ public class AppointmentController implements Initializable {
     }
     private boolean isEditInProcess() {return editInProcess;}
     private boolean isNewInProcess() {return newInProcess;}
-    public void isReadyToSave(Appointment appointment){
-        //  scheduling an appointment outside of business hours defined as 8:00 a.m. to 10:00 p.m. EST, including weekends
-        //  scheduling overlapping appointments for customers
-    }
     public void onAllClicked(ActionEvent actionEvent) throws SQLException {
         appointmentList = AppointmentQuery.getAppointmentList();
         refreshAppointmentTable();
@@ -284,56 +281,55 @@ public class AppointmentController implements Initializable {
         setDisableFields(false);
         setNewInProcess(true);
     }
-    public void onSaveClicked(ActionEvent actionEvent) throws SQLException {
-        boolean saveSuccess = false;
-        Appointment appointment = getAppointmentFromFields();
-        boolean inputValid = true;
-        ZoneId estId = ZoneId.of("America/New_York");
-        Timestamp startTimestamp = appointment.getStartTimestamp();
-        Timestamp endTimestamp = appointment.getEndTimestamp();
-        Instant startInstant = startTimestamp.toInstant();
-        Instant endInstant = endTimestamp.toInstant();
-        ZonedDateTime startZonedDateTime = ZonedDateTime.ofInstant(startInstant, estId);
-        ZonedDateTime endZonedDateTime = ZonedDateTime.ofInstant(endInstant, estId);
-        OffsetTime startOffsetTime = OffsetTime.ofInstant(startInstant, estId);
-        OffsetTime endOffsetTime = OffsetTime.ofInstant(endInstant, estId);
-        ZoneOffset estOffset = ZoneOffset.of(ZoneId.SHORT_IDS.get("EST"));
-        OffsetTime minimumTime = OffsetTime.of(8, 0, 0, 0,estOffset);
-        OffsetTime maximumTime = OffsetTime.of(22, 0, 0, 0, estOffset);
-        Alert alert = null;
-        if(startOffsetTime.isBefore(minimumTime)) inputValid = false;
-        else if(startOffsetTime.isAfter(maximumTime)) inputValid = false;
-        else if(endOffsetTime.isBefore(minimumTime)) inputValid = false;
-        else if(endOffsetTime.isAfter(maximumTime)) inputValid = false;
-        //Set alert if appointment outside of business hours
-        if (!inputValid) alert = new Alert(Alert.AlertType.ERROR, "Appointment is scheduled outside of business hours (8:00 AM - 10:00 PM EST");
-        else {   //Proceed to other input validation if time is within business hours.
-            if (AppointmentQuery.isConflicting(appointment)) {
-                inputValid = false;
-                alert = new Alert(Alert.AlertType.ERROR, "Customer has a conflicting appointment.");
+    public void onSaveClicked(ActionEvent actionEvent) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION, "Appointment updated successfully.");
+        try {
+            Appointment appointment = getAppointmentFromFields();
+            boolean inputValid = true;
+            ZoneId estId = ZoneId.of("America/New_York");
+            Timestamp startTimestamp = appointment.getStartTimestamp();
+            Timestamp endTimestamp = appointment.getEndTimestamp();
+            Instant startInstant = startTimestamp.toInstant();
+            Instant endInstant = endTimestamp.toInstant();
+            OffsetTime startOffsetTime = OffsetTime.ofInstant(startInstant, estId);
+            OffsetTime endOffsetTime = OffsetTime.ofInstant(endInstant, estId);
+            ZoneOffset estOffset = ZoneOffset.of(ZoneId.SHORT_IDS.get("EST"));
+            OffsetTime minimumTime = OffsetTime.of(8, 0, 0, 0, estOffset);
+            OffsetTime maximumTime = OffsetTime.of(22, 0, 0, 0, estOffset);
+            if (startOffsetTime.isBefore(minimumTime)) inputValid = false;
+            else if (startOffsetTime.isAfter(maximumTime)) inputValid = false;
+            else if (endOffsetTime.isBefore(minimumTime)) inputValid = false;
+            else if (endOffsetTime.isAfter(maximumTime)) inputValid = false;
+            //Set alert if appointment outside of business hours
+            if (!inputValid)
+                alert = new Alert(Alert.AlertType.ERROR, "Appointment is scheduled outside of business hours (8:00 AM - 10:00 PM EST");
+            else {   //Proceed to other input validation if time is within business hours.
+                if (AppointmentQuery.isConflicting(appointment)) {
+                    inputValid = false;
+                    alert = new Alert(Alert.AlertType.ERROR, "Customer has a conflicting appointment.");
+                } else if (startInstant.isAfter(endInstant)) {
+                    inputValid = false;
+                    alert = new Alert(Alert.AlertType.ERROR, "Start time is before end time.");
+                }
+                else if (startInstant.isBefore(Instant.now())){
+                    inputValid = false;
+                    alert = new Alert(Alert.AlertType.ERROR, "Appointment time has already passed.");
+                }
             }
-            else if (startInstant.isAfter(endInstant)){
-                inputValid = false;
-                alert = new Alert(Alert.AlertType.ERROR, "Start time is before end time.");
-            }
-        }
-        if (inputValid){
-            try {
+            if (inputValid) {
                 if (isNewInProcess()) {
-                    saveSuccess = AppointmentQuery.insertAppointment(appointment);
+                    AppointmentQuery.insertAppointment(appointment);
                     setNewInProcess(false);
                 } else if (isEditInProcess()) {
                     appointment.setAppointmentId(Integer.parseInt(appointmentIdField.getText()));
-                    saveSuccess = AppointmentQuery.updateAppointment(appointment);
+                    AppointmentQuery.updateAppointment(appointment);
                     setEditInProcess(false);
                 }
                 refreshAppointmentTable();
-            } catch (InputMismatchException e) {
-                alert = new Alert(Alert.AlertType.ERROR, "Confirm all fields entered properly");
-                saveSuccess = false;
             }
+        } catch(Exception e){
+            alert = new Alert(Alert.AlertType.ERROR, "Confirm all fields entered properly");
         }
-        if (saveSuccess) alert = new Alert(Alert.AlertType.INFORMATION, "Appointment updated successfully.");
         alert.showAndWait();
     }
     public void onTableDatePicker(ActionEvent actionEvent){
