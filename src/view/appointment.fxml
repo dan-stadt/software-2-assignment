@@ -17,7 +17,7 @@
 <?import javafx.scene.text.Text?>
 
 <AnchorPane fx:id="appointmentWindow" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.AppointmentController">
-   <TableView fx:id="appointmentTable" placeholder="No appointments found for the chosen dates." layoutX="34.0" layoutY="31.0">
+   <TableView fx:id="appointmentTable" layoutX="34.0" layoutY="31.0">
      <columns>
        <TableColumn fx:id="appointmentIdColumn" minWidth="-1.0" prefWidth="100.0" text="Appointment ID" />
        <TableColumn fx:id="titleColumn" minWidth="-1.0" prefWidth="75.0" text="Title" />
@@ -104,7 +104,6 @@
         </ButtonBar>
       <ButtonBar buttonMinWidth="55.0" prefHeight="40.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="8" GridPane.valignment="CENTER">
         <buttons>
-            <DatePicker fx:id="endDatePicker" />
             <ComboBox fx:id="endHourBox" maxWidth="55.0" />
             <ComboBox fx:id="endMinuteBox" maxWidth="55.0" />
         </buttons>

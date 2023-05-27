@@ -42,7 +42,6 @@ public class AppointmentQuery {
         resultSet.close();
         return appointmentList;
     }
-
     public static String getContactName(int contactId) throws SQLException {
         String sql = "SELECT * FROM contacts WHERE Contact_ID = ?;";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
@@ -120,7 +119,6 @@ public class AppointmentQuery {
         ps.setTimestamp(2, lastTimestamp);
         return parseAppointmentList(ps.executeQuery());
     }
-
     public static boolean updateAppointment(Appointment appointment) throws SQLException {
         String sql = "UPDATE appointments SET Title=?, Description=?, Location=?, Type=?, Start=?, " +
                 "End=?, Last_Update=?, Last_Updated_By=?, User_ID=?, Contact_ID=? " +
@@ -142,7 +140,6 @@ public class AppointmentQuery {
         ps.setInt(11,appointment.getAppointmentId());
         return ps.executeUpdate() > 0;
     }
-
     public static ObservableList<Appointment> getWeeklyAppointments(DatePicker tableDatePicker) throws SQLException {
         String sql = "SELECT * FROM appointments WHERE Start BETWEEN ? AND ?;";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
@@ -166,5 +163,22 @@ public class AppointmentQuery {
         ps.setTimestamp(1, firstTimeStamp);
         ps.setTimestamp(2, lastTimeStamp);
         return parseAppointmentList(ps.executeQuery());
+    }
+
+    public static boolean isConflicting(Appointment appointment) throws SQLException{
+        String sql = "SELECT * FROM appointments WHERE Start BETWEEN ? AND ? OR End BETWEEN ? AND ? AND Appointment_ID <> ? AND Customer_ID = ?";
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        Timestamp startTime = appointment.getStartTimestamp();
+        Timestamp endTime = appointment.getEndTimestamp();
+        int appointmentId = appointment.getAppointmentId();
+        int customerId = appointment.getCustomerId();
+        ps.setTimestamp(1, startTime);
+        ps.setTimestamp(2, endTime);
+        ps.setTimestamp(3, startTime);
+        ps.setTimestamp(4, endTime);
+        ps.setInt(5, appointmentId);
+        ps.setInt(6, customerId);
+        ResultSet result = ps.executeQuery();
+        return !result.next();
     }
 }

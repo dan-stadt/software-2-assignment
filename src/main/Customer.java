@@ -15,7 +15,6 @@ public class Customer {
     private String division;
     private int divisionId;
     private String country;
-    private ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
 
     public Customer(int id, String name, String address, String postal, String phone, int divisionId) throws SQLException {
         setId(id);
@@ -43,10 +42,6 @@ public class Customer {
         String country = CustomerQuery.getCountry(divisionId);
         setCountry(country);
     }
-
-    public ObservableList<Appointment> getAppointmentList() {
-        return appointmentList;
-    }
     public String getAddress(){return address;}
     public String getCountry(){return country;}
     public int getDivisionId() {
@@ -57,12 +52,6 @@ public class Customer {
     public String getName(){return name;}
     public String getPostal(){return postal;}
     public String getPhone(){return phone;}
-    public boolean isSafeToDelete() {
-        return getAppointmentList().size() < 1;
-    }
-    public void setAppointmentList(ObservableList<Appointment> appointmentList) {
-        this.appointmentList = appointmentList;
-    }
     public void setAddress(String address){this.address = address;}
     public void setCountry(String country){this.country = country;}
     public void setDivision(String division){this.division = division;}

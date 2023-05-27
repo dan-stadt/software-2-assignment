@@ -1,5 +1,6 @@
 package controller;
 
+import com.sun.scenario.effect.Offset;
 import helper.AppointmentQuery;
 import helper.CustomerQuery;
 import javafx.collections.FXCollections;
@@ -17,17 +18,19 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import main.Appointment;
 import main.Contact;
+import main.Customer;
+
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.*;
+import java.time.zone.ZoneRulesProvider;
 import java.util.InputMismatchException;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 public class AppointmentController implements Initializable {
@@ -57,8 +60,6 @@ public class AppointmentController implements Initializable {
     public ComboBox<String> startMinuteBox;
     @FXML
     public DatePicker startDatePicker;
-    @FXML
-    public DatePicker endDatePicker;
     @FXML
     public DatePicker tableDatePicker;
     @FXML
@@ -150,6 +151,7 @@ public class AppointmentController implements Initializable {
         endColumn.setCellValueFactory(new PropertyValueFactory<>("EndDateTime"));
         customerIdColumn.setCellValueFactory(new PropertyValueFactory<>("CustomerId"));
         userIdColumn.setCellValueFactory(new PropertyValueFactory<>("UserId"));
+        appointmentTable.setPlaceholder(new Label("No appointments found for the selected dates."));
         appointmentTable.setItems(appointmentList);
         appointmentTable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         setEditInProcess(false);
@@ -177,7 +179,6 @@ public class AppointmentController implements Initializable {
         startDatePicker.setValue(null );
         startHourBox.setValue(null);
         startDatePicker.setValue(null);
-        endDatePicker.setValue(null);
         endHourBox.setValue(null);
         endMinuteBox.setValue(null);
         customerIdField.setText(null);
@@ -211,24 +212,23 @@ public class AppointmentController implements Initializable {
         return null;
     }
     public Appointment getAppointmentFromFields() {
-        Integer appointmentId = Integer.getInteger(appointmentIdField.getText());
+        Integer appointmentId = Integer.parseInt(appointmentIdField.getText());
         String title = titleField.getText();
         String description = descriptionField.getText();
         String location = locationField.getText();
         String contactName = contactBox.getValue();
         Integer contactId = getContactIdFromName(contactName);
         String type = typeField.getText();
-        LocalDate startDate = startDatePicker.getValue();
+        LocalDate date = startDatePicker.getValue();
         int startHour = Integer.parseInt(startHourBox.getValue());
         int startMinute = Integer.parseInt(startMinuteBox.getValue());
         LocalTime startTime = LocalTime.of(startHour, startMinute);
-        LocalDateTime startLocalDateTime = LocalDateTime.of(startDate, startTime);
+        LocalDateTime startLocalDateTime = LocalDateTime.of(date, startTime);
         Timestamp start = Timestamp.valueOf(startLocalDateTime);
-        LocalDate endDate = endDatePicker.getValue();
         int endHour = Integer.parseInt(endHourBox.getValue());
         int endMinute = Integer.parseInt(endMinuteBox.getValue());
         LocalTime endTime= LocalTime.of(endHour, endMinute);
-        LocalDateTime endDateTime = LocalDateTime.of(endDate, endTime);
+        LocalDateTime endDateTime = LocalDateTime.of(date, endTime);
         Timestamp end = Timestamp.valueOf(endDateTime);
         Integer customerId= Integer.parseInt(customerIdField.getText());
         Integer userId= Integer.parseInt(userIdField.getText());
@@ -239,7 +239,7 @@ public class AppointmentController implements Initializable {
     }
     private boolean isEditInProcess() {return editInProcess;}
     private boolean isNewInProcess() {return newInProcess;}
-    public void isReady(){
+    public void isReadyToSave(Appointment appointment){
         //  scheduling an appointment outside of business hours defined as 8:00 a.m. to 10:00 p.m. EST, including weekends
         //  scheduling overlapping appointments for customers
     }
@@ -247,7 +247,6 @@ public class AppointmentController implements Initializable {
         appointmentList = AppointmentQuery.getAppointmentList();
         refreshAppointmentTable();
     }
-
     public void onCustomerClicked(ActionEvent actionEvent) throws IOException {
         CustomerController customer = new CustomerController();
         customer.open();
@@ -293,29 +292,52 @@ public class AppointmentController implements Initializable {
     }
     public void onSaveClicked(ActionEvent actionEvent) throws SQLException {
         boolean saveSuccess = false;
-        try {
-            Appointment appointment = getAppointmentFromFields();
-            if (isNewInProcess()){
-                saveSuccess = AppointmentQuery.insertAppointment(appointment);
-                setNewInProcess(false);
-            }
-            else if (isEditInProcess()){
-                appointment.setAppointmentId(Integer.parseInt(appointmentIdField.getText()));
-                saveSuccess = AppointmentQuery.updateAppointment(appointment);
-                setEditInProcess(false);
-            }
-            refreshAppointmentTable();
+        Appointment appointment = getAppointmentFromFields();
+        boolean inputValid = true;
+        ZoneId estId = ZoneId.of("America/New_York");
+        LocalDateTime startDateTime = appointment.getStartDateTime();
+        LocalDateTime endDateTime = appointment.getEndDateTime();
+        ZonedDateTime startZonedDateTime = ZonedDateTime.of(startDateTime, estId);
+        ZonedDateTime endZonedDateTime = ZonedDateTime.of(endDateTime, estId);
+        OffsetTime startOffsetTime = OffsetTime.from(startZonedDateTime);
+        OffsetTime endOffsetTime = OffsetTime.from(endZonedDateTime);
+        ZoneOffset estOffset = ZoneOffset.of(ZoneId.SHORT_IDS.get("EST"));
+        OffsetTime minimumTime = OffsetTime.of(8, 0, 0, 0,estOffset);
+        OffsetTime maximumTime = OffsetTime.of(22, 0, 0, 0, estOffset);
+        Alert alert = null;
+        if(startOffsetTime.isBefore(minimumTime)) inputValid = false;
+        else if(startOffsetTime.isAfter(maximumTime)) inputValid = false;
+        else if(endOffsetTime.isBefore(minimumTime)) inputValid = false;
+        else if(endOffsetTime.isAfter(maximumTime)) inputValid = false;
+        //Set alert if appointment outside of business hours
+        if (!inputValid) alert = new Alert(Alert.AlertType.ERROR, "Appointment is scheduled outside of business hours (8:00 AM - 10:00 PM EST");
+        if (AppointmentQuery.isConflicting(appointment) && inputValid){
+            inputValid = false;
+            alert = new Alert (Alert.AlertType.ERROR, "Customer has a conflicting appointment.");
         }
-        catch (InputMismatchException e) {saveSuccess = false; }
-        Alert alert;
+        if (inputValid){
+            try {
+                if (isNewInProcess()) {
+                    saveSuccess = AppointmentQuery.insertAppointment(appointment);
+                    setNewInProcess(false);
+                } else if (isEditInProcess()) {
+                    appointment.setAppointmentId(Integer.parseInt(appointmentIdField.getText()));
+                    saveSuccess = AppointmentQuery.updateAppointment(appointment);
+                    setEditInProcess(false);
+                }
+                refreshAppointmentTable();
+            } catch (InputMismatchException e) {
+                saveSuccess = false;
+                alert = new Alert(Alert.AlertType.ERROR, "Confirm all fields entered properly");
+            }
+        }
         if (saveSuccess){
             alert = new Alert(Alert.AlertType.INFORMATION, "Appointment updated successfully.");
 
         }
-        else alert = new Alert(Alert.AlertType.ERROR, "Confirm all fields entered properly");
         alert.showAndWait();
     }
-    public void onTableDatePicker(ActionEvent actionEvent) throws SQLException {
+    public void onTableDatePicker(ActionEvent actionEvent){
         if (weeklyButton.isSelected()) {
             weeklyButton.setSelected(false);
             weeklyButton.fire();
@@ -358,7 +380,6 @@ public class AppointmentController implements Initializable {
         startDatePicker.setDisable(disable);
         startHourBox.setDisable(disable);
         startMinuteBox.setDisable(disable);
-        endDatePicker.setDisable(disable);
         endHourBox.setDisable(disable);
         endMinuteBox.setDisable(disable);
         customerIdField.setDisable(disable);
@@ -377,7 +398,6 @@ public class AppointmentController implements Initializable {
         startDatePicker.setValue(selectedAppointment.getStartTimestamp().toLocalDateTime().toLocalDate());
         startHourBox.setValue(selectedAppointment.getStartHour());
         startMinuteBox.setValue(selectedAppointment.getStartMinute());
-        endDatePicker.setValue(selectedAppointment.getEndDate());
         endHourBox.setValue(selectedAppointment.getEndHour());
         endMinuteBox.setValue(selectedAppointment.getEndMinute());
         customerIdField.setText(selectedAppointment.getCustomerId().toString());

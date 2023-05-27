@@ -176,7 +176,7 @@ public class CustomerController implements Initializable {
         divisionBox.setItems(divisionList);
     }
     public void onDeleteClicked(ActionEvent actionEvent) throws SQLException {
-        if (selectedCustomer.isSafeToDelete()){
+        if (CustomerQuery.isSafeToDelete(selectedCustomer)){
             int deleteId = selectedCustomer.getId();
             boolean deleted = CustomerQuery.deleteCustomer(deleteId);
             if (!deleted){

@@ -60,6 +60,16 @@ public class CustomerQuery {
         }
         return region;
     }
+    public static int getDivisionId (String division) throws SQLException {
+        String sql = "SELECT * FROM first_level_divisions WHERE Division=?;";
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ps.setString(1, division);
+        ResultSet result = ps.executeQuery();
+        if(result.next()){
+            return result.getInt("Division_ID");
+        }
+        else{return 0;}
+    }
     public static ObservableList<String> getDivisionList(String country) throws SQLException {
         int countryCode = getCountryId(country);
         String sql = "SELECT * FROM first_level_divisions WHERE Country_ID = ?";
@@ -89,6 +99,14 @@ public class CustomerQuery {
         ps.setString(9, user);
         return !ps.execute();
     }
+    public static boolean isSafeToDelete (Customer customer) throws SQLException{
+        String sql = "SELECT * FROM appointments WHERE Customer_ID = ?";
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        int customerId = customer.getId();
+        ps.setInt(1, customerId);
+        ResultSet result = ps.executeQuery();
+        return !result.next();
+    }
     public static ObservableList<Customer> getCustomerList () throws SQLException {
         String sql = "SELECT * FROM customers";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
@@ -111,16 +129,6 @@ public class CustomerQuery {
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
         ps.setInt(1, divisionId);
         return ps.executeQuery();
-    }
-    public static int getDivisionId (String division) throws SQLException {
-        String sql = "SELECT * FROM first_level_divisions WHERE Division=?;";
-        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
-        ps.setString(1, division);
-        ResultSet result = ps.executeQuery();
-        if(result.next()){
-            return result.getInt("Division_ID");
-        }
-        else{return 0;}
     }
     public static boolean updateCustomer(Customer customer) throws SQLException {
         String sql = "UPDATE customers SET Customer_Name=?, Address=?, Postal_Code=?, Phone=?, Division_ID=?, Last_Update=?, Last_Updated_By=? WHERE Customer_ID=?;";

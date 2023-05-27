@@ -9,8 +9,7 @@ public class Appointment {
     private Integer appointmentId;
     private Integer customerId;
     private Integer userId;
-    private LocalDate endDate;
-    private LocalDate startDate;
+    private LocalDate date;
     private LocalDateTime endDateTime;
     private LocalDateTime startDateTime;
     private String description;
@@ -39,11 +38,10 @@ public class Appointment {
         setUserId(userId);
         setContactId(contactId);
         setStartDateTime(start.toLocalDateTime());
-        setStartDate(startDateTime.toLocalDate());
+        setDate(startDateTime.toLocalDate());
         setStartHour((startDateTime.getHour()));
         setStartMinute(startDateTime.getMinute());
         setEndDateTime(end.toLocalDateTime());
-        setEndDate(endDateTime.toLocalDate());
         setEndHour(endDateTime.getHour());
         setEndMinute(endDateTime.getMinute());
     }
@@ -54,7 +52,6 @@ public class Appointment {
     public String getContactName() {return contact.getContactName();}
     public Integer getContactId(){return contact.getContactId();}
     public String getDescription() { return description; }
-    public LocalDate getEndDate() {return endDate; }
     public LocalDateTime getEndDateTime() {return endDateTime; }
     public Timestamp getEndTimestamp() {return endTimestamp;}
     public String getEndHour() {return endHour; }
@@ -66,7 +63,7 @@ public class Appointment {
     public Timestamp getStartTimestamp() { return startTimestamp; }
     public String getTitle() { return title; }
     public String getType() {return type;}
-    public LocalDate getStartDate() {return startDate; }
+    public LocalDate getDate() {return date; }
 
 
     public void setAppointmentId(Integer appointmentId) {this.appointmentId = appointmentId;}
@@ -74,7 +71,6 @@ public class Appointment {
     public void setContactId(Integer contactId) {contact.setContactId(contactId);}
     public void setCustomerId(Integer customerId) { this.customerId = customerId; }
     public void setDescription(String description) { this.description = description; }
-    public void setEndDate(LocalDate endDate) {this.endDate = endDate; }
     public void setEndDateTime(LocalDateTime endDateTime) {this.endDateTime = endDateTime; }
     public void setEndHour(Integer endHour){this.endHour = toTwoDigits(endHour);}
     public void setEndHour(String endHour) {this.endHour = endHour; }
@@ -82,7 +78,7 @@ public class Appointment {
     public void setEndMinute(String endMinute) { this.endMinute = endMinute; }
     public void setEndTimestamp(Timestamp endTimestamp) { this.endTimestamp = endTimestamp; }
     public void setLocation(String location) { this.location = location; }
-    public void setStartDate(LocalDate startDate) {this.startDate = startDate; }
+    public void setDate(LocalDate date) {this.date = date; }
     public void setStartHour(Integer startHour){this.startHour = toTwoDigits(startHour);}
     public void setStartHour(String startHour) { this.startHour = startHour; }
     public void setStartDateTime(LocalDateTime startDateTime) {this.startDateTime = startDateTime; }

@@ -104,7 +104,6 @@
         </ButtonBar>
       <ButtonBar buttonMinWidth="55.0" prefHeight="40.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="8" GridPane.valignment="CENTER">
         <buttons>
-            <DatePicker fx:id="endDatePicker" />
             <ComboBox fx:id="endHourBox" maxWidth="55.0" />
             <ComboBox fx:id="endMinuteBox" maxWidth="55.0" />
         </buttons>
