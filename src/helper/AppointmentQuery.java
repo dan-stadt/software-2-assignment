@@ -12,46 +12,35 @@ import java.time.*;
 import java.time.format.DateTimeParseException;
 
 public class AppointmentQuery {
+    /**
+     * Deletes an appointment from the SQL Database
+     * @param appointmentId Appointment ID to delete
+     * @return returns true if appointment successfully deleted
+     * @throws SQLException exception thrown if error in SQL Statement
+     */
     public static boolean deleteAppointment(Integer appointmentId) throws SQLException {
         String sql = "DELETE FROM appointments WHERE Appointment_ID=?;";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
         ps.setInt(1, appointmentId);
         return ps.executeUpdate() > 0;
     }
+    /**
+     * Retrieves all appointments in SQL database.
+     * @return ObservableList of Appointment objects.
+     * @throws SQLException exception thrown if error in SQL Statement o
+     */
     public static ObservableList<Appointment> getAppointmentList() throws SQLException {
         String sql = "SELECT * FROM appointments";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
         return parseAppointmentList(ps.executeQuery());
     }
-    private static ObservableList<Appointment> parseAppointmentList(ResultSet resultSet) throws SQLException {
-        ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
-        while (resultSet.next()) {
-            int appointmentId = resultSet.getInt("Appointment_ID");
-            String title = resultSet.getString("Title");
-            String description = resultSet.getString("Description");
-            String location = resultSet.getString("Location");
-            String type = resultSet.getString("Type");
-            Timestamp start = resultSet.getTimestamp("Start");
-            Timestamp end= resultSet.getTimestamp("End");
-            Integer customerID = resultSet.getInt("Customer_ID");
-            Integer userId = resultSet.getInt("User_ID");
-            Integer contactId = resultSet.getInt("Contact_ID");
-            Appointment appointment = new Appointment(appointmentId,title, description, location, type, start, end, customerID, userId, contactId);
-            appointmentList.add(appointment);
-        }
-        resultSet.close();
-        return appointmentList;
-    }
-    public static String getContactName(int contactId) throws SQLException {
-        String sql = "SELECT * FROM contacts WHERE Contact_ID = ?;";
-        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
-        ps.setInt(1, contactId);
-        ResultSet result = ps.executeQuery();
-        String contact = null;
-        if (result.next()){
-            contact = result.getString("Contact_Name");
-        }
-        return contact;
+
+    /**
+     * Generates report with total number of appointments by type and month.
+     */
+    public static void getAppointmentbyTypeMonth(){
+
+
     }
     public static ObservableList<Contact> getContactList() throws SQLException {
         String sql = "SELECT * FROM contacts";
@@ -119,27 +108,6 @@ public class AppointmentQuery {
         ps.setTimestamp(2, lastTimestamp);
         return parseAppointmentList(ps.executeQuery());
     }
-    public static boolean updateAppointment(Appointment appointment) throws SQLException {
-        String sql = "UPDATE appointments SET Title=?, Description=?, Location=?, Type=?, Start=?, " +
-                "End=?, Last_Update=?, Last_Updated_By=?, User_ID=?, Contact_ID=? " +
-                "WHERE Appointment_ID=?";
-        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
-        Instant now = Instant.now();
-        Timestamp timeStamp = Timestamp.from(now);
-        String user = LoginController.getUsername();
-        ps.setString(1, appointment.getTitle());
-        ps.setString(2, appointment.getDescription());
-        ps.setString(3, appointment.getLocation());
-        ps.setString(4, appointment.getType());
-        ps.setTimestamp(5, appointment.getStartTimestamp());
-        ps.setTimestamp(6, appointment.getEndTimestamp());
-        ps.setTimestamp(7, timeStamp);
-        ps.setString(8, user);
-        ps.setInt(9, appointment.getUserId());
-        ps.setInt(10, appointment.getContactId());
-        ps.setInt(11,appointment.getAppointmentId());
-        return ps.executeUpdate() > 0;
-    }
     public static ObservableList<Appointment> getWeeklyAppointments(DatePicker tableDatePicker) throws SQLException {
         String sql = "SELECT * FROM appointments WHERE Start BETWEEN ? AND ?;";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
@@ -164,7 +132,6 @@ public class AppointmentQuery {
         ps.setTimestamp(2, lastTimeStamp);
         return parseAppointmentList(ps.executeQuery());
     }
-
     public static boolean isConflicting(Appointment appointment) throws SQLException{
         String sql = "SELECT * FROM appointments WHERE Start BETWEEN ? AND ? OR End BETWEEN ? AND ? AND Appointment_ID <> ? AND Customer_ID = ?";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
@@ -179,5 +146,45 @@ public class AppointmentQuery {
         ps.setInt(5, appointmentId);
         ps.setInt(6, customerId);
         return !ps.execute();
+    }
+    private static ObservableList<Appointment> parseAppointmentList(ResultSet resultSet) throws SQLException {
+        ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
+        while (resultSet.next()) {
+            int appointmentId = resultSet.getInt("Appointment_ID");
+            String title = resultSet.getString("Title");
+            String description = resultSet.getString("Description");
+            String location = resultSet.getString("Location");
+            String type = resultSet.getString("Type");
+            Timestamp start = resultSet.getTimestamp("Start");
+            Timestamp end= resultSet.getTimestamp("End");
+            Integer customerID = resultSet.getInt("Customer_ID");
+            Integer userId = resultSet.getInt("User_ID");
+            Integer contactId = resultSet.getInt("Contact_ID");
+            Appointment appointment = new Appointment(appointmentId,title, description, location, type, start, end, customerID, userId, contactId);
+            appointmentList.add(appointment);
+        }
+        resultSet.close();
+        return appointmentList;
+    }
+    public static boolean updateAppointment(Appointment appointment) throws SQLException {
+        String sql = "UPDATE appointments SET Title=?, Description=?, Location=?, Type=?, Start=?, " +
+                "End=?, Last_Update=?, Last_Updated_By=?, User_ID=?, Contact_ID=? " +
+                "WHERE Appointment_ID=?";
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        Instant now = Instant.now();
+        Timestamp timeStamp = Timestamp.from(now);
+        String user = LoginController.getUsername();
+        ps.setString(1, appointment.getTitle());
+        ps.setString(2, appointment.getDescription());
+        ps.setString(3, appointment.getLocation());
+        ps.setString(4, appointment.getType());
+        ps.setTimestamp(5, appointment.getStartTimestamp());
+        ps.setTimestamp(6, appointment.getEndTimestamp());
+        ps.setTimestamp(7, timeStamp);
+        ps.setString(8, user);
+        ps.setInt(9, appointment.getUserId());
+        ps.setInt(10, appointment.getContactId());
+        ps.setInt(11,appointment.getAppointmentId());
+        return ps.executeUpdate() > 0;
     }
 }
