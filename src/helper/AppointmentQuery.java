@@ -178,7 +178,6 @@ public class AppointmentQuery {
         ps.setTimestamp(4, endTime);
         ps.setInt(5, appointmentId);
         ps.setInt(6, customerId);
-        ResultSet result = ps.executeQuery();
-        return !result.next();
+        return !ps.execute();
     }
 }

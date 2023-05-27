@@ -1,8 +1,8 @@
 package controller;
 
-import com.sun.scenario.effect.Offset;
+import main.Appointment;
+import main.Contact;
 import helper.AppointmentQuery;
-import helper.CustomerQuery;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -16,21 +16,15 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import main.Appointment;
-import main.Contact;
-import main.Customer;
-
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.*;
-import java.time.zone.ZoneRulesProvider;
 import java.util.InputMismatchException;
 import java.util.Locale;
 import java.util.ResourceBundle;
-import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 public class AppointmentController implements Initializable {
@@ -295,12 +289,14 @@ public class AppointmentController implements Initializable {
         Appointment appointment = getAppointmentFromFields();
         boolean inputValid = true;
         ZoneId estId = ZoneId.of("America/New_York");
-        LocalDateTime startDateTime = appointment.getStartDateTime();
-        LocalDateTime endDateTime = appointment.getEndDateTime();
-        ZonedDateTime startZonedDateTime = ZonedDateTime.of(startDateTime, estId);
-        ZonedDateTime endZonedDateTime = ZonedDateTime.of(endDateTime, estId);
-        OffsetTime startOffsetTime = OffsetTime.from(startZonedDateTime);
-        OffsetTime endOffsetTime = OffsetTime.from(endZonedDateTime);
+        Timestamp startTimestamp = appointment.getStartTimestamp();
+        Timestamp endTimestamp = appointment.getEndTimestamp();
+        Instant startInstant = startTimestamp.toInstant();
+        Instant endInstant = endTimestamp.toInstant();
+        ZonedDateTime startZonedDateTime = ZonedDateTime.ofInstant(startInstant, estId);
+        ZonedDateTime endZonedDateTime = ZonedDateTime.ofInstant(endInstant, estId);
+        OffsetTime startOffsetTime = OffsetTime.ofInstant(startInstant, estId);
+        OffsetTime endOffsetTime = OffsetTime.ofInstant(endInstant, estId);
         ZoneOffset estOffset = ZoneOffset.of(ZoneId.SHORT_IDS.get("EST"));
         OffsetTime minimumTime = OffsetTime.of(8, 0, 0, 0,estOffset);
         OffsetTime maximumTime = OffsetTime.of(22, 0, 0, 0, estOffset);
@@ -311,9 +307,15 @@ public class AppointmentController implements Initializable {
         else if(endOffsetTime.isAfter(maximumTime)) inputValid = false;
         //Set alert if appointment outside of business hours
         if (!inputValid) alert = new Alert(Alert.AlertType.ERROR, "Appointment is scheduled outside of business hours (8:00 AM - 10:00 PM EST");
-        if (AppointmentQuery.isConflicting(appointment) && inputValid){
-            inputValid = false;
-            alert = new Alert (Alert.AlertType.ERROR, "Customer has a conflicting appointment.");
+        else {   //Proceed to other input validation if time is within business hours.
+            if (AppointmentQuery.isConflicting(appointment)) {
+                inputValid = false;
+                alert = new Alert(Alert.AlertType.ERROR, "Customer has a conflicting appointment.");
+            }
+            else if (startInstant.isAfter(endInstant)){
+                inputValid = false;
+                alert = new Alert(Alert.AlertType.ERROR, "Start time is before end time.");
+            }
         }
         if (inputValid){
             try {
@@ -327,14 +329,11 @@ public class AppointmentController implements Initializable {
                 }
                 refreshAppointmentTable();
             } catch (InputMismatchException e) {
-                saveSuccess = false;
                 alert = new Alert(Alert.AlertType.ERROR, "Confirm all fields entered properly");
+                saveSuccess = false;
             }
         }
-        if (saveSuccess){
-            alert = new Alert(Alert.AlertType.INFORMATION, "Appointment updated successfully.");
-
-        }
+        if (saveSuccess) alert = new Alert(Alert.AlertType.INFORMATION, "Appointment updated successfully.");
         alert.showAndWait();
     }
     public void onTableDatePicker(ActionEvent actionEvent){
