@@ -15,8 +15,8 @@ public class AppointmentQuery {
     /**
      * Deletes an appointment from the SQL Database
      * @param appointmentId Appointment ID to delete
-     * @return returns true if appointment successfully deleted
-     * @throws SQLException exception thrown if error in SQL Statement
+     * @return returns true if appointment successfully deleted, otherwise false.
+     * @throws SQLException exception thrown if error in SQL statement or parameter(s).
      */
     public static boolean deleteAppointment(Integer appointmentId) throws SQLException {
         String sql = "DELETE FROM appointments WHERE Appointment_ID=?;";
@@ -27,21 +27,26 @@ public class AppointmentQuery {
     /**
      * Retrieves all appointments in SQL database.
      * @return ObservableList of Appointment objects.
-     * @throws SQLException exception thrown if error in SQL Statement o
+     * @throws SQLException exception thrown if error in SQL statement or parameter(s).
      */
     public static ObservableList<Appointment> getAppointmentList() throws SQLException {
         String sql = "SELECT * FROM appointments";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
         return parseAppointmentList(ps.executeQuery());
     }
-
     /**
      * Generates report with total number of appointments by type and month.
+     * @throws SQLException exception thrown if error in SQL statement or parameter(s).
      */
-    public static void getAppointmentbyTypeMonth(){
-
-
+    public static void getAppointmentByTypeMonth() throws SQLException {
+        ObservableList<Appointment> appointmentList = getAppointmentList();
+        //TODO:Create method
     }
+    /**
+     * Retrieves all contacts in the SQL database.
+     * @return ObservableList of Contacts.
+     * @throws SQLException exception thrown if error in SQL statement or parameter(s).
+     */
     public static ObservableList<Contact> getContactList() throws SQLException {
         String sql = "SELECT * FROM contacts";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
@@ -56,6 +61,12 @@ public class AppointmentQuery {
         }
         return contactList;
     }
+    /**
+     * Insert a new appointment into the SQL database.
+     * @param appointment inputs appointment to add to the database.
+     * @return true if insert is successfully, otherwise false.
+     * @throws SQLException exception thrown if error in SQL statement or parameter(s).
+     */
     public static boolean insertAppointment (Appointment appointment) throws SQLException {
         String sql = "INSERT INTO appointments (Title, Description, Location, Type, Start, End," +
                 "Create_Date, Created_By, Last_Update, Last_Updated_By, Customer_ID, User_ID, Contact_ID) " +
@@ -79,6 +90,13 @@ public class AppointmentQuery {
         ps.setInt(13, appointment.getContactId());
         return !ps.execute();
     }
+
+    /**
+     * Retrieves a list of appointments by month selected in DatePicker.
+     * @param tableDatePicker DatePicker in AppointmentController.
+     * @return ObservableList of Appointments for the selected month.
+     * @throws SQLException exception thrown if error in SQL statement or parameter(s).
+     */
     public static ObservableList<Appointment> getMonthlyAppointments(DatePicker tableDatePicker) throws SQLException {
         String sql = "SELECT * FROM appointments WHERE Start BETWEEN ? AND ?;";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
@@ -108,6 +126,12 @@ public class AppointmentQuery {
         ps.setTimestamp(2, lastTimestamp);
         return parseAppointmentList(ps.executeQuery());
     }
+    /**
+     * Retrieves a list of appointments by week selected in DatePicker.
+     * @param tableDatePicker DatePicker in AppointmentController.
+     * @return ObservableList of Appointments for the selected month.
+     * @throws SQLException exception thrown if error in SQL statement or parameter(s).
+     */
     public static ObservableList<Appointment> getWeeklyAppointments(DatePicker tableDatePicker) throws SQLException {
         String sql = "SELECT * FROM appointments WHERE Start BETWEEN ? AND ?;";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
@@ -132,6 +156,12 @@ public class AppointmentQuery {
         ps.setTimestamp(2, lastTimeStamp);
         return parseAppointmentList(ps.executeQuery());
     }
+    /**
+     * Checks whether the appointment to be saved (updated or new) conflicts with any existing appointments.
+     * @param appointment takes the appointment to be saved.
+     * @return true if there is a conflicting appointment with saved appointment, otherwise false.
+     * @throws SQLException exception thrown if error in SQL statement or parameter(s).
+     */
     public static boolean isConflicting(Appointment appointment) throws SQLException{
         String sql = "SELECT * FROM appointments WHERE Start BETWEEN ? AND ? OR End BETWEEN ? AND ? AND Appointment_ID <> ? AND Customer_ID = ?";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
@@ -147,6 +177,12 @@ public class AppointmentQuery {
         ps.setInt(6, customerId);
         return !ps.execute();
     }
+    /**
+     * Retrives all Appointments from a ResultSet.
+     * @param resultSet ResultSet from an executed PreparedStatement.
+     * @return ObservableList of Appointments.
+     * @throws SQLException exception thrown if error in SQL statement or parameter(s).
+     */
     private static ObservableList<Appointment> parseAppointmentList(ResultSet resultSet) throws SQLException {
         ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
         while (resultSet.next()) {
@@ -166,7 +202,13 @@ public class AppointmentQuery {
         resultSet.close();
         return appointmentList;
     }
-    public static boolean updateAppointment(Appointment appointment) throws SQLException {
+
+    /**
+     * Updates an existing appointment in the SQL database.
+     * @param appointment input is appointment to be updated.
+     * @throws SQLException exception thrown if error in SQL statement or parameter(s).
+     */
+    public static void updateAppointment(Appointment appointment) throws SQLException {
         String sql = "UPDATE appointments SET Title=?, Description=?, Location=?, Type=?, Start=?, " +
                 "End=?, Last_Update=?, Last_Updated_By=?, User_ID=?, Contact_ID=? " +
                 "WHERE Appointment_ID=?";
@@ -185,6 +227,6 @@ public class AppointmentQuery {
         ps.setInt(9, appointment.getUserId());
         ps.setInt(10, appointment.getContactId());
         ps.setInt(11,appointment.getAppointmentId());
-        return ps.executeUpdate() > 0;
+        ps.executeUpdate();
     }
 }
