@@ -78,7 +78,6 @@ public class CustomerController implements Initializable {
         try{
             customerList = CustomerQuery.getCustomerList();
             countryBox.setItems(CustomerQuery.getCountryList());
-            //TODO: Populate appointmentList for each customer
         }catch (SQLException e){
             Alert alert = new Alert(Alert.AlertType.ERROR, "Error loading customers.");
             alert.showAndWait();
