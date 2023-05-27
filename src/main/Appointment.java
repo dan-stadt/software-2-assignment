@@ -77,182 +77,242 @@ public class Appointment {
     public Integer getAppointmentId() {return appointmentId; }
 
     /**
-     *
-     * @return
-     */
-    public Integer getCustomerId() {return customerId; }
-
-    /**
-     *
-     * @return
-     */
-    public Integer getUserId() {return userId; }
-
-    /**
-     *
-     * @return
+     * Get Contact Name as String
+     * @return String contactName
      */
     public String getContactName() {return contact.getContactName();}
 
     /**
-     *
-      * @return
+     * Get Contact ID as Integer
+      * @return Integer contactID
      */
     public Integer getContactId(){return contact.getContactId();}
 
     /**
-     *
-     * @return
+     * Get Customer ID as Integer
+     * @return Integer customerId
+     */
+    public Integer getCustomerId() {return customerId; }
+
+    /**
+     * Get date value as a LocalDate
+     * @return LocalDate date
+     */
+    public LocalDate getDate() {return date; }
+
+    /**
+     * Get description
+     * @return String description
      */
     public String getDescription() { return description; }
+
     /**
-     * Get String end formatted according to format variable.
+     * Get end formatted according to format variable
      * @return String of formatted end date & time
      */
     public String getEnd(){ return end; }
 
     /**
-     *
-      * @return
+     * Get end value as LocalDateTIme
+     * @return LocalDateTime end
      */
     public LocalDateTime getEndDateTime() {return endDateTime; }
 
     /**
-     *
-     * @return
+     * Get end value as a Timestamp
+     * @return Timestamp endTimestamp
      */
     public Timestamp getEndTimestamp() {return endTimestamp;}
 
     /**
-     *
-     * @return
+     * Get end hour value as String
+     * @return String endHour
      */
     public String getEndHour() {return endHour; }
 
     /**
-     *
-     * @return
+     * Get end minute value as String
+     * @return String endMinute
      */
     public String getEndMinute() { return endMinute; }
 
     /**
-     *
-     * @return
+     * Get location as a String
+     * @return String location
      */
     public String getLocation() { return location; }
 
     /**
-     * Get String start formatted according to format variable.
+     * Get String start formatted according to format variable
      * @return String of formatted start date & time
      */
     public String getStart() { return start; }
+
     /**
-     *
-     * @return
+     * Get start value as LocalDateTime
+     * @return LocalDateTime startDateTime
      */
     public LocalDateTime getStartDateTime() {return startDateTime; }
 
     /**
-     *
-     * @return
+     * Get start hour value as String
+     * @return String startHour
      */
     public String getStartHour() { return startHour; }
 
     /**
-     *
-     * @return
+     * Get start minute value as String
+     * @return String startMinute
      */
     public String getStartMinute() {return startMinute; }
 
     /**
-     *
-     * @return
+     * Get start value as a Timestamp
+     * @return Timestamp startTimestamp
      */
     public Timestamp getStartTimestamp() { return startTimestamp; }
 
     /**
-     *
-     * @return
+     * Get title value as a String
+     * @return String title
      */
     public String getTitle() { return title; }
 
     /**
-     *
-     * @return
+     * Get type as a String
+     * @return String type
      */
     public String getType() {return type;}
 
     /**
-     *
-     * @return
+     * Get User ID as Integer
+     * @return Integer userId
      */
-    public LocalDate getDate() {return date; }
+    public Integer getUserId() {return userId; }
 
     /**
-     *
-     * @param appointmentId
+     * Set appointmetnId as Integer value
+     * @param appointmentId Integer to set appointmentId
      */
     public void setAppointmentId(Integer appointmentId) {this.appointmentId = appointmentId;}
 
     /**
-     *
-     * @param contactName
+     * Set contactName as String value
+     * @param contactName String to set contactName
      */
     public void setContactName(String contactName) {this.contact.setContactName(contactName);}
 
     /**
-     *
-     * @param contactId
+     * Set contactId as Integer value
+     * @param contactId Integer to set contactId
      */
     public void setContactId(Integer contactId) {contact.setContactId(contactId);}
 
     /**
-     *
-     * @param customerId
+     * Set customerId as Integer
+     * @param customerId Integer to set customerId
      */
     public void setCustomerId(Integer customerId) { this.customerId = customerId; }
 
     /**
-     *
-     * @param description
+     * Set date as a LocalDate
+     * @param date LocalDate to set date
+     */
+    public void setDate(LocalDate date) {this.date = date; }
+
+    /**
+     * Set description as String value
+     * @param description String to set description
      */
     public void setDescription(String description) { this.description = description; }
 
     /**
-     *
-     * @param endDateTime
+     * Set endDateTime as LocalDateTime value
+     * @param endDateTime LocalDateTime to set endDateTime
      */
     public void setEndDateTime(LocalDateTime endDateTime) {this.endDateTime = endDateTime; }
 
     /**
-     *
-     * @param endHour
+     * Set endHour as String value
+     * @param endHour String to set endHour
      */
     public void setEndHour(Integer endHour){this.endHour = toTwoDigits(endHour);}
     /**
-     * Set the object's String end variable.
-     * @param end String of end time to set.
+     * Set end as Integer value
+     * @param end Integer to set end
      */
     public void setEnd(String end) { this.end = end; }
-    public void setEndHour(String endHour) {this.endHour = endHour; }
-    public void setEndMinute(Integer endMinute){this.endMinute = toTwoDigits(endMinute);}
-    public void setEndMinute(String endMinute) { this.endMinute = endMinute; }
-    public void setEndTimestamp(Timestamp endTimestamp) { this.endTimestamp = endTimestamp; }
-    public void setLocation(String location) { this.location = location; }
-    public void setDate(LocalDate date) {this.date = date; }
+
     /**
-     * Set the object's String start variable.
+     * Set endHour as String value
+     * @param endHour String to set endHour
+     */
+    public void setEndHour(String endHour) {this.endHour = endHour; }
+
+    /**
+     * Set endMinute as a two-digit String value
+     * @param endMinute Integer to set endMinute
+     */
+    public void setEndMinute(Integer endMinute){this.endMinute = toTwoDigits(endMinute);}
+
+    /**
+     * Set end Timestamp value
+     * @param endTimestamp Timestamp to set end
+     */
+    public void setEndTimestamp(Timestamp endTimestamp) { this.endTimestamp = endTimestamp; }
+
+    /**
+     * Set location String value
+     * @param location String to set location
+     */
+    public void setLocation(String location) { this.location = location; }
+
+    /**
+     * Set the start String value
      * @param start String of start time to set.
      */
     public void setStart(String start) { this.start = start; }
+
+    /**
+     * Set startHour as two-digit String from Integer
+     * @param startHour Integer to parse for String startHour
+     */
     public void setStartHour(Integer startHour){this.startHour = toTwoDigits(startHour);}
-    public void setStartHour(String startHour) { this.startHour = startHour; }
+
+    /**
+     * Set startDateTime as LocalDateTime
+     * @param startDateTime LocalDateTime to set startDateTime
+     */
     public void setStartDateTime(LocalDateTime startDateTime) {this.startDateTime = startDateTime; }
+
+    /**
+     * Set startMinute as two-digit String from Integer
+     * @param startMinute Integer to parse for String startMinute
+     */
     public void setStartMinute(Integer startMinute){this.startMinute = toTwoDigits(startMinute);}
-    public void setStartMinute(String startMinute) {this.startMinute = startMinute; }
+
+    /**
+     * Set startTimestamp Timestamp value
+     * @param startTimestamp Timestamp to set startTimestamp
+     */
     public void setStartTimestamp(Timestamp startTimestamp) { this.startTimestamp = startTimestamp; }
+
+    /**
+     * Set title as String value
+     * @param title String to set title
+     */
     public void setTitle(String title) { this.title = title; }
+
+    /**
+     * Set type as String
+     * @param type String to set type
+     */
     public void setType(String type) { this.type = type; }
+
+    /**
+     * Set userId as Integer
+     * @param userId Integer to set userId
+     */
     public void setUserId(Integer userId) {this.userId = userId;}
 
     /**
