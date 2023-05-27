@@ -1,6 +1,9 @@
 package controller;
 
+import helper.AppointmentQuery;
 import helper.UserQuery;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -13,13 +16,15 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import main.Appointment;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -80,6 +85,23 @@ public class LoginController implements Initializable {
                 writer.close();
                 HomeController home = new HomeController();
                 home.open();
+                ObservableList<Appointment> appointmentList = AppointmentQuery.getAppointmentList();
+                LocalDateTime now = LocalDateTime.now();
+                for(Appointment appointment : appointmentList){
+                    LocalDateTime start = appointment.getStartDateTime();
+                    LocalDateTime fifteenMins = now.plusMinutes(15);
+                    if (start.isBefore(fifteenMins) && start.isAfter(now)){
+                        String appointmentId = Integer.toString(appointment.getAppointmentId());
+                        LocalDateTime startDateTime = appointment.getStartDateTime();
+                        DateTimeFormatter format = DateTimeFormatter.of("")
+                        start.format()
+                        Alert alert = new Alert (Alert.AlertType.WARNING, "Appointment " + appointmentId + " starts at " + start);
+                        alert.showAndWait();
+                        break;
+                    }
+                }
+                Alert alert = new Alert(Alert.AlertType.INFORMATION, "No appointments starting soon.");
+                alert.showAndWait();
                 close();
             }
             else{
