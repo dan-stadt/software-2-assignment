@@ -3,6 +3,7 @@ package main;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Appointment {
     private Contact contact = new Contact();
@@ -15,13 +16,16 @@ public class Appointment {
     private String description;
     private String endHour;
     private String endMinute;
+    private String end;
     private String location;
     private String title;
     private String type;
     private String startHour;
     private String startMinute;
+    private String start;
     private Timestamp endTimestamp;
     private Timestamp startTimestamp;
+    private final DateTimeFormatter format = DateTimeFormatter.ofPattern("h:mm a, MM/d/yy");
 
     public Appointment(){}
     public Appointment(Integer appointmentId, String title, String description, String location,
@@ -41,9 +45,11 @@ public class Appointment {
         setDate(startDateTime.toLocalDate());
         setStartHour((startDateTime.getHour()));
         setStartMinute(startDateTime.getMinute());
+        setStart(startDateTime.format(format));
         setEndDateTime(end.toLocalDateTime());
         setEndHour(endDateTime.getHour());
         setEndMinute(endDateTime.getMinute());
+        setEnd(endDateTime.format(format));
     }
 
     public Integer getAppointmentId() {return appointmentId; }
@@ -95,4 +101,8 @@ public class Appointment {
         }
         else return Integer.toString(time);
     }
+    public String getEnd(){ return end; }
+    public String getStart() { return start; }
+    public void setStart(String start) { this.start = start; }
+    public void setEnd(String end) { this.end = end; }
 }

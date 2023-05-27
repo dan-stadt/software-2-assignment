@@ -141,8 +141,8 @@ public class AppointmentController implements Initializable {
         locationColumn.setCellValueFactory(new PropertyValueFactory<>("Location"));
         contactColumn.setCellValueFactory(new PropertyValueFactory<>("ContactName"));
         typeColumn.setCellValueFactory(new PropertyValueFactory<>("Type"));
-        startColumn.setCellValueFactory(new PropertyValueFactory<>("StartDateTime"));
-        endColumn.setCellValueFactory(new PropertyValueFactory<>("EndDateTime"));
+        startColumn.setCellValueFactory(new PropertyValueFactory<>("Start"));
+        endColumn.setCellValueFactory(new PropertyValueFactory<>("End"));
         customerIdColumn.setCellValueFactory(new PropertyValueFactory<>("CustomerId"));
         userIdColumn.setCellValueFactory(new PropertyValueFactory<>("UserId"));
         appointmentTable.setPlaceholder(new Label("No appointments found for the selected dates."));

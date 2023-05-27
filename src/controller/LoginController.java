@@ -87,21 +87,25 @@ public class LoginController implements Initializable {
                 home.open();
                 ObservableList<Appointment> appointmentList = AppointmentQuery.getAppointmentList();
                 LocalDateTime now = LocalDateTime.now();
+                boolean upcomingAppointment = false;
                 for(Appointment appointment : appointmentList){
                     LocalDateTime start = appointment.getStartDateTime();
                     LocalDateTime fifteenMins = now.plusMinutes(15);
                     if (start.isBefore(fifteenMins) && start.isAfter(now)){
                         String appointmentId = Integer.toString(appointment.getAppointmentId());
                         LocalDateTime startDateTime = appointment.getStartDateTime();
-                        DateTimeFormatter format = DateTimeFormatter.of("")
-                        start.format()
-                        Alert alert = new Alert (Alert.AlertType.WARNING, "Appointment " + appointmentId + " starts at " + start);
+                        DateTimeFormatter format = DateTimeFormatter.ofPattern("h:mm a', on 'E, MMM dd'th'");
+                        String startString = startDateTime.format(format);
+                        Alert alert = new Alert (Alert.AlertType.WARNING, "Appointment " + appointmentId + " starts at " + startString);
                         alert.showAndWait();
+                        upcomingAppointment = true;
                         break;
                     }
                 }
-                Alert alert = new Alert(Alert.AlertType.INFORMATION, "No appointments starting soon.");
-                alert.showAndWait();
+                if(!upcomingAppointment){
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "No appointments starting soon.");
+                    alert.showAndWait();
+                }
                 close();
             }
             else{
