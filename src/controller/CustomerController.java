@@ -222,7 +222,7 @@ public class CustomerController implements Initializable {
     /**
      * Called when the Country dropdown menu is selected. Pulls all regions associated with that country.
      * @param actionEvent Dropdown menu selected with a country.
-     * @throws SQLException Exception if there is an error in the SQL Statement or Paramters.
+     * @throws SQLException Exception if there is an error in the SQL Statement or Parameters.
      */
     public void onCountrySelected(ActionEvent actionEvent) throws SQLException {
         String country = countryBox.getValue();
@@ -250,6 +250,13 @@ public class CustomerController implements Initializable {
             alert.showAndWait();
         }
     }
+
+    /**
+     * When edit button is clicked, all fields are enabled. Edit button is only visible when a Customer is selected.
+     * Fields will have already populated upon customer selection. Save button becomes visible. Edit & Delete buttons
+     * are hidden.
+     * @param actionEvent Edit button clicked.
+     */
     public void onEditClicked(ActionEvent actionEvent) {
         if (selectedCustomer != null) {
             setEditCustomer(selectedCustomer);
@@ -261,14 +268,30 @@ public class CustomerController implements Initializable {
             setNewInProcess(false);
         }
     }
-    public void onFieldEntered(ActionEvent actionEvent) throws SQLException {
+
+    /**
+     * When the enter key is pressed while the focus is in a TextField, calls the save button.
+     * @param actionEvent Enter key pressed
+     */
+    public void onFieldEntered(ActionEvent actionEvent){
         saveButton.fire();
     }
+
+    /**
+     * When the Home Button is pressed, opens the Home window and closes the current Customer window.
+     * @param actionEvent Home Button pressed
+     * @throws IOException If there is an error opening the Home FXML File.
+     */
     public void onHomeClicked(ActionEvent actionEvent) throws IOException{
         HomeController home = new HomeController();
         home.open();
         close();
     }
+
+    /**
+     * Clears and enables editable fields and sets newInProcess to true.
+     * @param actionEvent New Button clicked.
+     */
     public void onNewClicked(ActionEvent actionEvent) {
         if (isEditInProcess()) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Add new customer without saving?");
@@ -280,6 +303,13 @@ public class CustomerController implements Initializable {
             startNewCustomer();
         }
     }
+
+    /**
+     * When the Save Button is clicked, performs input validation. If fields pass input validation tests, a new Customer
+     * is added to the SQL Database. Input validation checks that all fields are entered.
+     * @param actionEvent
+     * @throws SQLException
+     */
     public void onSaveClicked(ActionEvent actionEvent) throws SQLException {
         boolean saveSuccess = false;
         editCustomer = getCustomerFields();
@@ -307,6 +337,11 @@ public class CustomerController implements Initializable {
             addButton.setVisible(true);
         }
     }
+
+    /**
+     * Opens a new Customer window. Called by other controllers.
+     * @throws IOException Exception thrown if the FXML file cannot be loaded or found.
+     */
     public void open() throws IOException{
         Parent root = FXMLLoader.load(CustomerController.class.getResource("../view/customer.fxml"));
         Stage stage = new Stage();
@@ -314,9 +349,19 @@ public class CustomerController implements Initializable {
         stage.setTitle("Customers");
         stage.show();
     }
-    public void setEditInProcess(boolean fieldChanged) {
-        this.editInProcess = fieldChanged;
+
+    /**
+     * Sets the editInProcess field to true or false.
+     * @param editInProcess Boolean value to set editInProcess
+     */
+    public void setEditInProcess(boolean editInProcess) {
+        this.editInProcess = editInProcess;
     }
+
+    /**
+     * Sets the Customer being edited to the input Customer. Used prior to saving a new or edited Customer
+     * @param customer Customer object to be assigned to editCustomer.
+     */
     public static void setEditCustomer(Customer customer){
         editCustomer = customer;
     }
