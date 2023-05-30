@@ -71,6 +71,12 @@ public class CustomerController implements Initializable {
     private static Customer editCustomer;
     private static Customer selectedCustomer;
 
+    /**
+     * Opens the Customer FXML Interface and configures Customer table.
+     * Fields are disabled at startup until a new customer is added or an exisitng customer is edited.
+     * @param url The location of the Customer FXML file.
+     * @param resourceBundle The Customer FXML file object.
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         homeButton.setCancelButton(true);
@@ -101,6 +107,10 @@ public class CustomerController implements Initializable {
         };
         customerTable.getSelectionModel().getSelectedItems().addListener(tableListener);
     }
+
+    /**
+     * Erases the value in each field. Called after new clicked, or a successful save or deletion.
+     */
     public void clearFields(){
         idField.clear();
         nameField.clear();
@@ -110,6 +120,10 @@ public class CustomerController implements Initializable {
         countryBox.setValue(null);
         divisionBox.setValue(null);
     }
+
+    /**
+     * Closes the Customer window. Called after switching to the Home or Window appointments.
+     */
     public void close(){
         Stage stage = (Stage) homeButton.getScene().getWindow();
         stage.close();
@@ -121,6 +135,10 @@ public class CustomerController implements Initializable {
             if (response == ButtonType.OK) setFields(selectedCustomer);
         });
     }
+
+    /**
+     * Disables all fields, except the ID field, which is disable by default and not enabled.
+     */
     public void disableFields(){
         nameField.setDisable(true);
         addressField.setDisable(true);
@@ -129,6 +147,10 @@ public class CustomerController implements Initializable {
         countryBox.setDisable(true);
         divisionBox.setDisable(true);
     }
+
+    /**
+     * Enables all fields, except the ID field, which should not be enabled per specifications.
+     */
     public void enableFields(){
         nameField.setDisable(false);
         addressField.setDisable(false);
@@ -137,6 +159,12 @@ public class CustomerController implements Initializable {
         countryBox.setDisable(false);
         divisionBox.setDisable(false);
     }
+
+    /**
+     * Pulls text entered into each input control in the form and returns a Customer object with that information.
+     * @return Returns a Customer based on the values entered into the fields.
+     * @throws SQLException Exception thrown if there is an error with the SQL Statement or parameters.
+     */
     public Customer getCustomerFields() throws SQLException {
         String name = nameField.getText();
         String address = addressField.getText();
@@ -150,6 +178,12 @@ public class CustomerController implements Initializable {
         }
         return customer;
     }
+
+    /**
+     * Checks if each field has data entered.
+     * @return Returns false is any field is blank, otherwise true.
+     * @throws SQLException Exception thrown if errors in SQL Statement or parameters.
+     */
     public boolean isFormComplete() throws SQLException {
         Customer customer = getCustomerFields();
         if (customer.getAddress().isBlank()) return false;
@@ -158,17 +192,38 @@ public class CustomerController implements Initializable {
         else if (customer.getPostal().isBlank()) return false;
         else return !customer.getDivision().isBlank();
     }
+
+    /**
+     * Checks if a Customer record is currently being edited.
+     * @return Returns true if edit is in process; if not, returns false.
+     */
     public boolean isEditInProcess(){
         return editInProcess;
     }
+    /**
+     * Checks if a new Customer record is currently being entered.
+     * @return Returns true if a new Customer record is being entered; if not, returns false.
+     */
     public boolean isNewInProcess() {
         return newInProcess;
     }
+
+    /**
+     * Method called when the Appointment button is clicked. Opens the Appointment window and closes the Customer window.
+     * @param actionEvent Button clicked
+     * @throws IOException Exception if unable to locate or open Appointment file.
+     */
     public void onAppointmentClicked(ActionEvent actionEvent) throws IOException {
         AppointmentController appointment = new AppointmentController();
         appointment.open();
         close();
     }
+
+    /**
+     * Called when the Country dropdown menu is selected. Pulls all regions associated with that country.
+     * @param actionEvent Dropdown menu selected with a country.
+     * @throws SQLException Exception if there is an error in the SQL Statement or Paramters.
+     */
     public void onCountrySelected(ActionEvent actionEvent) throws SQLException {
         String country = countryBox.getValue();
         ObservableList<String> divisionList = CustomerQuery.getDivisionList(country);
