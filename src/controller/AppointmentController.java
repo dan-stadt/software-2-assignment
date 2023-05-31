@@ -170,7 +170,7 @@ public class AppointmentController implements Initializable {
     }
 
     /**
-     *
+     * Clears all TextFields and ComboBoxes.
      */
     private void clearFields() {
         appointmentIdField.clear();
@@ -189,7 +189,7 @@ public class AppointmentController implements Initializable {
     }
 
     /**
-     *
+     * Closes the Appointment window.
      */
     public void close() {
         Stage stage = (Stage) homeButton.getScene().getWindow();
@@ -197,7 +197,7 @@ public class AppointmentController implements Initializable {
     }
 
     /**
-     *
+     * Confirms that user wants to select a new user if a new Customer is being entered or an edit is in process.
      */
     private void confirmSelect() {
     Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Change appointment without saving?");
@@ -208,9 +208,9 @@ public class AppointmentController implements Initializable {
     }
 
     /**
-     *
-     * @param contactName
-     * @return
+     * Uses a Contact Name to retrieve the associated Contact ID>
+     * @param contactName Take the Contact Name to search.
+     * @return Returns the Contact ID for the associated Contact Name.
      */
     public Integer getContactIdFromName(String contactName){
         for (Contact contact : contactList){
@@ -279,17 +279,32 @@ public class AppointmentController implements Initializable {
      */
     private boolean isNewInProcess() {return newInProcess;}
 
+    /**
+     *
+     * @param actionEvent
+     * @throws SQLException
+     */
     public void onAllClicked(ActionEvent actionEvent) throws SQLException {
         appointmentList = AppointmentQuery.getAppointmentList();
         refreshAppointmentTable();
     }
 
+    /**
+     *
+     * @param actionEvent
+     * @throws IOException
+     */
     public void onCustomerClicked(ActionEvent actionEvent) throws IOException {
         CustomerController customer = new CustomerController();
         customer.open();
         close();
     }
 
+    /**
+     *
+     * @param actionEvent
+     * @throws SQLException
+     */
     public void onDeleteClicked(ActionEvent actionEvent) throws SQLException {
         String type = selectedAppointment.getType();
         if (AppointmentQuery.deleteAppointment(selectedAppointment.getAppointmentId())){
@@ -303,22 +318,50 @@ public class AppointmentController implements Initializable {
             alert.showAndWait();
         }
     }
+
+    /**
+     *
+     * @param actionEvent
+     */
     public void onEditClicked(ActionEvent actionEvent) {
         setDisableFields(false);
         setEditInProcess(true);
         saveButton.setVisible(true);
         editButton.setVisible(false);
     }
+
+    /**
+     *
+     * @param actionEvent
+     */
     public void onFieldEntered(ActionEvent actionEvent) {saveButton.fire();}
+
+    /**
+     *
+     * @param actionEvent
+     * @throws IOException
+     */
     public void onHomeClicked(ActionEvent actionEvent) throws IOException {
         HomeController home = new HomeController();
         home.open();
         close();
     }
+
+    /**
+     *
+     *
+     * @param actionEvent
+     * @throws SQLException
+     */
     public void onMonthlyClicked(ActionEvent actionEvent) throws SQLException {
         appointmentList = AppointmentQuery.getMonthlyAppointments(tableDatePicker);
         refreshAppointmentTable();
     }
+
+    /**
+     *
+     * @param actionEvent
+     */
     public void onNewClicked(ActionEvent actionEvent) {
         clearFields();
         deleteButton.setVisible(false);
@@ -328,6 +371,11 @@ public class AppointmentController implements Initializable {
         setDisableFields(false);
         setNewInProcess(true);
     }
+
+    /**
+     *
+     * @param actionEvent
+     */
     public void onSaveClicked(ActionEvent actionEvent) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION, "Appointment updated successfully.");
         try {
@@ -379,6 +427,11 @@ public class AppointmentController implements Initializable {
         }
         alert.showAndWait();
     }
+
+    /**
+     *
+     * @param actionEvent
+     */
     public void onTableDatePicker(ActionEvent actionEvent){
         if (weeklyButton.isSelected()) {
             weeklyButton.setSelected(false);
@@ -389,10 +442,21 @@ public class AppointmentController implements Initializable {
             monthlyButton.fire();
         }
     }
+
+    /**
+     *
+     * @param actionEvent
+     * @throws SQLException
+     */
     public void onWeeklyClicked(ActionEvent actionEvent) throws SQLException {
         appointmentList = AppointmentQuery.getWeeklyAppointments(tableDatePicker);
         refreshAppointmentTable();
     }
+
+    /**
+     *
+     * @throws IOException
+     */
     public void open() throws IOException {
         Parent root = FXMLLoader.load(AppointmentController.class.getResource("../view/appointment.fxml"));
         Stage stage = new Stage();
@@ -400,6 +464,11 @@ public class AppointmentController implements Initializable {
         stage.setTitle("Appointments");
         stage.show();
     }
+
+    /**
+     *
+     * @throws SQLException
+     */
     public void refreshAppointmentTable() throws SQLException {
         if (allButton.isSelected()) {
             appointmentList = AppointmentQuery.getAppointmentList();
@@ -413,6 +482,11 @@ public class AppointmentController implements Initializable {
         appointmentTable.setItems(appointmentList);
 
     }
+
+    /**
+     *
+     * @param disable
+     */
     public void setDisableFields(boolean disable){
         titleField.setDisable(disable);
         descriptionField.setDisable(disable);
@@ -427,6 +501,11 @@ public class AppointmentController implements Initializable {
         customerIdField.setDisable(disable);
         userIdField.setDisable(disable);
     }
+
+    /**
+     *
+     * @param editInProcess
+     */
     public void setEditInProcess(boolean editInProcess) {
         this.editInProcess = editInProcess;
     }
@@ -449,6 +528,11 @@ public class AppointmentController implements Initializable {
         customerIdField.setText(selectedAppointment.getCustomerId().toString());
         userIdField.setText(selectedAppointment.getUserId().toString());
     }
+
+    /**
+     *
+     * @param newInProcess
+     */
     public void setNewInProcess(boolean newInProcess) {
         this.newInProcess = newInProcess;
     }
