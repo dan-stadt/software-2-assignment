@@ -2,7 +2,6 @@ package controller;
 
 import helper.AppointmentQuery;
 import helper.UserQuery;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -17,7 +16,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import main.Appointment;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -42,6 +40,11 @@ public class LoginController implements Initializable {
     private Alert ioError;
     private Alert loginError;
 
+    /**
+     * Initializes the login window
+     * @param url Pathway of the FXML file.
+     * @param resourceBundle Login FXML file object.
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         exitButton.setCancelButton(true);
@@ -61,16 +64,35 @@ public class LoginController implements Initializable {
             loginError = new Alert(Alert.AlertType.ERROR, "Nom d'utilisateur et mot de passe correspondants introuvables.");
         }
     }
+
+    /**
+     *
+     * @return
+     */
     public static String getUsername(){
         return username;
     }
+
+    /**
+     *
+     */
     public void close(){
         Stage stage = (Stage) loginWindow.getScene().getWindow();
         stage.close();
     }
+
+    /**
+     *
+     * @param actionEvent
+     */
     public void exitClick(ActionEvent actionEvent) {
         close();
     }
+
+    /**
+     *
+     * @throws SQLException
+     */
     public void loginCheck() throws SQLException {
         File loginFile = new File("login_activity.txt");
         username = usernameField.getText();
@@ -117,8 +139,25 @@ public class LoginController implements Initializable {
             ioError.showAndWait();
         }
     }
+
+    /**
+     *
+     * @param actionEvent
+     * @throws SQLException
+     */
     public void onEnterClicked(ActionEvent actionEvent) throws SQLException {loginCheck();}
+
+    /**
+     *
+     * @param actionEvent
+     * @throws SQLException
+     */
     public void onFieldEntered(ActionEvent actionEvent) throws SQLException {loginCheck();}
+
+    /**
+     *
+     * @throws IOException
+     */
     public void open() throws IOException{
         Stage stage = new Stage();
         Parent root = FXMLLoader.load(LoginController.class.getResource("../view/login.fxml"));
@@ -127,5 +166,4 @@ public class LoginController implements Initializable {
         stage.show();
 
     }
-
 }
