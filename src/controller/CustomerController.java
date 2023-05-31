@@ -307,8 +307,8 @@ public class CustomerController implements Initializable {
     /**
      * When the Save Button is clicked, performs input validation. If fields pass input validation tests, a new Customer
      * is added to the SQL Database. Input validation checks that all fields are entered.
-     * @param actionEvent
-     * @throws SQLException
+     * @param actionEvent Save Button is clicked.
+     * @throws SQLException Exception thrown is error in SQL statement or parameters.
      */
     public void onSaveClicked(ActionEvent actionEvent) throws SQLException {
         boolean saveSuccess = false;
@@ -359,15 +359,25 @@ public class CustomerController implements Initializable {
     }
 
     /**
-     * Sets the Customer being edited to the input Customer. Used prior to saving a new or edited Customer
+     * Sets a Customer object to the editCustomer. Used prior to saving a new or edited Customer
      * @param customer Customer object to be assigned to editCustomer.
      */
     public static void setEditCustomer(Customer customer){
         editCustomer = customer;
     }
+
+    /**
+     * Set a Customer object to the selectedCustomer. Used upon selecting a Customer in the table.
+     * @param customer Customer object to be assigned to selectedCustomer.
+     */
     public static void setSelectedCustomer(Customer customer){
         selectedCustomer = customer;
     }
+
+    /**
+     * Populates fields with information from a Customer object.
+     * @param customer Customer object to set fields.
+     */
     public void setFields(Customer customer){
         if(customer != null){
             idField.setText(customer.getId().toString());
@@ -386,9 +396,19 @@ public class CustomerController implements Initializable {
             disableFields();
         }
     }
+
+    /**
+     * Sets whether a new customer is being entered.
+     * @param newInProcess true if new has been clicked and customer not saved, otherwise false.
+     */
     public void setNewInProcess(boolean newInProcess) {
         this.newInProcess = newInProcess;
     }
+
+    /**
+     * Starts a new  Customer entry by enabling and clearing fields. Save is the only visible Button.
+     * New Customer is not added to the database until Save is clicked and fields pass input validation.
+     */
     public void startNewCustomer(){
         customerTable.getSelectionModel().clearSelection();
         clearFields();
