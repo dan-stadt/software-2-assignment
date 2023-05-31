@@ -22,7 +22,6 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.*;
-import java.util.InputMismatchException;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
@@ -107,6 +106,12 @@ public class AppointmentController implements Initializable {
     private static final ObservableList<String> hours = FXCollections.observableArrayList(
             "00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11",
             "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23");
+
+    /**
+     * Initializes Appointment window.
+     * @param url Pathway of FXML file
+     * @param resourceBundle FXML file object.
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         homeButton.setCancelButton(true);
@@ -163,6 +168,10 @@ public class AppointmentController implements Initializable {
         };
         appointmentTable.getSelectionModel().getSelectedItems().addListener(tableListener);
     }
+
+    /**
+     *
+     */
     private void clearFields() {
         appointmentIdField.clear();
         titleField.clear();
@@ -178,10 +187,18 @@ public class AppointmentController implements Initializable {
         customerIdField.setText(null);
         userIdField.setText(null);
     }
+
+    /**
+     *
+     */
     public void close() {
         Stage stage = (Stage) homeButton.getScene().getWindow();
         stage.close();
     }
+
+    /**
+     *
+     */
     private void confirmSelect() {
     Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Change appointment without saving?");
     alert.showAndWait().ifPresent(response ->{
@@ -189,6 +206,12 @@ public class AppointmentController implements Initializable {
         });
 
     }
+
+    /**
+     *
+     * @param contactName
+     * @return
+     */
     public Integer getContactIdFromName(String contactName){
         for (Contact contact : contactList){
             if (contact.getContactName().equals(contactName)){
@@ -197,6 +220,12 @@ public class AppointmentController implements Initializable {
         }
         return null;
     }
+
+    /**
+     *
+     * @param contactId
+     * @return
+     */
     public String getContactNameFromId(Integer contactId){
         for (Contact contact : contactList){
             if (contactId.equals(contact.getContactId())){
@@ -205,6 +234,11 @@ public class AppointmentController implements Initializable {
         }
         return null;
     }
+
+    /**
+     *
+     * @return
+     */
     public Appointment getAppointmentFromFields() {
         int appointmentId = 0;
         if (isEditInProcess()) appointmentId = Integer.parseInt(appointmentIdField.getText());
@@ -232,17 +266,30 @@ public class AppointmentController implements Initializable {
         appointment.setContactName(contactName);
         return appointment;
     }
+
+    /**
+     *
+     * @return
+     */
     private boolean isEditInProcess() {return editInProcess;}
+
+    /**
+     *
+     * @return
+     */
     private boolean isNewInProcess() {return newInProcess;}
+
     public void onAllClicked(ActionEvent actionEvent) throws SQLException {
         appointmentList = AppointmentQuery.getAppointmentList();
         refreshAppointmentTable();
     }
+
     public void onCustomerClicked(ActionEvent actionEvent) throws IOException {
         CustomerController customer = new CustomerController();
         customer.open();
         close();
     }
+
     public void onDeleteClicked(ActionEvent actionEvent) throws SQLException {
         String type = selectedAppointment.getType();
         if (AppointmentQuery.deleteAppointment(selectedAppointment.getAppointmentId())){
@@ -383,6 +430,10 @@ public class AppointmentController implements Initializable {
     public void setEditInProcess(boolean editInProcess) {
         this.editInProcess = editInProcess;
     }
+
+    /**
+     *
+     */
     public void setFields() {
         appointmentIdField.setText(selectedAppointment.getAppointmentId().toString());
         titleField.setText(selectedAppointment.getTitle());
@@ -401,6 +452,11 @@ public class AppointmentController implements Initializable {
     public void setNewInProcess(boolean newInProcess) {
         this.newInProcess = newInProcess;
     }
+
+    /**
+     *
+     * @param selectedAppointment
+     */
     public void setSelectedAppointment(Appointment selectedAppointment) {
         this.selectedAppointment = selectedAppointment;
     }
