@@ -197,7 +197,7 @@ public class AppointmentController implements Initializable {
     }
 
     /**
-     * Confirms that user wants to select a new user if a new Customer is being entered or an edit is in process.
+     * Confirms that user wants to select a new user if a new Appointment is being entered or an edit is in process.
      */
     private void confirmSelect() {
     Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Change appointment without saving?");
@@ -208,8 +208,8 @@ public class AppointmentController implements Initializable {
     }
 
     /**
-     * Uses a Contact Name to retrieve the associated Contact ID>
-     * @param contactName Take the Contact Name to search.
+     * Uses a Contact Name to retrieve the associated Contact ID.
+     * @param contactName Takes the Contact Name to search.
      * @return Returns the Contact ID for the associated Contact Name.
      */
     public Integer getContactIdFromName(String contactName){
@@ -222,9 +222,9 @@ public class AppointmentController implements Initializable {
     }
 
     /**
-     *
-     * @param contactId
-     * @return
+     * Uses a Contact ID to retrieve the associated Contact Name
+     * @param contactId Takes the Contact ID to search
+     * @return Returns the Contact Name associated with the Contact ID.
      */
     public String getContactNameFromId(Integer contactId){
         for (Contact contact : contactList){
@@ -236,8 +236,8 @@ public class AppointmentController implements Initializable {
     }
 
     /**
-     *
-     * @return
+     * Pulls all information from each field to create a new Appointment object.
+     * @return Returns an Appointment object populated with the current fields.
      */
     public Appointment getAppointmentFromFields() {
         int appointmentId = 0;
@@ -268,21 +268,21 @@ public class AppointmentController implements Initializable {
     }
 
     /**
-     *
-     * @return
+     * Checks whether an Appointment is currently being edited.
+     * @return Returns true if an Appointment is being edited; returns false if an Appointment is not being edited.
      */
     private boolean isEditInProcess() {return editInProcess;}
 
     /**
-     *
-     * @return
+     * Checks whether a new Appointment is currently being entered.
+     * @return Returns true if a new Appointment is being entered and has not been saved; otherwise returns false.
      */
     private boolean isNewInProcess() {return newInProcess;}
 
     /**
-     *
-     * @param actionEvent
-     * @throws SQLException
+     * Shows all appointments when All RadioButton is selected.
+     * @param actionEvent RadioButton is selected.
+     * @throws SQLException Exception thrown if error in SQL statement or parameter.
      */
     public void onAllClicked(ActionEvent actionEvent) throws SQLException {
         appointmentList = AppointmentQuery.getAppointmentList();
@@ -290,9 +290,9 @@ public class AppointmentController implements Initializable {
     }
 
     /**
-     *
-     * @param actionEvent
-     * @throws IOException
+     * Opens the Customer window and closes the Appointment window.
+     * @param actionEvent Button is clicked.
+     * @throws IOException Exception thrown if error opening Customer FXML file.
      */
     public void onCustomerClicked(ActionEvent actionEvent) throws IOException {
         CustomerController customer = new CustomerController();
@@ -301,9 +301,9 @@ public class AppointmentController implements Initializable {
     }
 
     /**
-     *
-     * @param actionEvent
-     * @throws SQLException
+     * Deletes the selectedAppointment.
+     * @param actionEvent Button is clicked.
+     * @throws SQLException Exception thrown is error in SQL statement or parameter.
      */
     public void onDeleteClicked(ActionEvent actionEvent) throws SQLException {
         String type = selectedAppointment.getType();
@@ -320,8 +320,8 @@ public class AppointmentController implements Initializable {
     }
 
     /**
-     *
-     * @param actionEvent
+     * Starts editing the selectedAppointment.
+     * @param actionEvent Button is clicked.
      */
     public void onEditClicked(ActionEvent actionEvent) {
         setDisableFields(false);
@@ -331,15 +331,15 @@ public class AppointmentController implements Initializable {
     }
 
     /**
-     *
-     * @param actionEvent
+     * Fires the save button if the Enter key is pressed while the focus is in a TextField and an Appointment is being edited.
+     * @param actionEvent Enter key is pressed.
      */
     public void onFieldEntered(ActionEvent actionEvent) {saveButton.fire();}
 
     /**
-     *
-     * @param actionEvent
-     * @throws IOException
+     * When the Home Button is clicked, open the Home screen and close the Appointment screen.
+     * @param actionEvent Button is clicked.
+     * @throws IOException Exception thrown if error opening FXML file.
      */
     public void onHomeClicked(ActionEvent actionEvent) throws IOException {
         HomeController home = new HomeController();
@@ -348,10 +348,10 @@ public class AppointmentController implements Initializable {
     }
 
     /**
-     *
-     *
-     * @param actionEvent
-     * @throws SQLException
+     * When the monthly Button is clicked, shows all of the Appointments in the month chosen in the DatePicker.
+     * If no month is selected, displays the current month.
+     * @param actionEvent Button is clicked.
+     * @throws SQLException Exception thrown if error with SQL statement or parameter.
      */
     public void onMonthlyClicked(ActionEvent actionEvent) throws SQLException {
         appointmentList = AppointmentQuery.getMonthlyAppointments(tableDatePicker);
@@ -359,8 +359,8 @@ public class AppointmentController implements Initializable {
     }
 
     /**
-     *
-     * @param actionEvent
+     * Clears and enables all fields. If a Appointment is being edited, it will confirm that user wants to change.
+     * @param actionEvent Button is clicked.
      */
     public void onNewClicked(ActionEvent actionEvent) {
         clearFields();
@@ -373,8 +373,9 @@ public class AppointmentController implements Initializable {
     }
 
     /**
-     *
-     * @param actionEvent
+     * Performs input validation to confirm that all fields are entered properly. If the fields pass input validation,
+     * a new Appointment will be entered into the database.
+     * @param actionEvent Button is clicked.
      */
     public void onSaveClicked(ActionEvent actionEvent) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION, "Appointment updated successfully.");
@@ -429,8 +430,9 @@ public class AppointmentController implements Initializable {
     }
 
     /**
-     *
-     * @param actionEvent
+     * When the tableDatePicker is adjusted, it changes the Appointments displayed.
+     * Will show Appointments in the selected month or week if either selected. Otherwise displays all Appointments.
+     * @param actionEvent Date selected.
      */
     public void onTableDatePicker(ActionEvent actionEvent){
         if (weeklyButton.isSelected()) {
@@ -444,9 +446,10 @@ public class AppointmentController implements Initializable {
     }
 
     /**
-     *
-     * @param actionEvent
-     * @throws SQLException
+     * When the weekly Button is clicked, shows all of the Appointments in the week selected in the DatePicker.
+     * If no week is selected, displays the current week.
+     * @param actionEvent Button is clicked.
+     * @throws SQLException Exception thrown if error with SQL statement or parameter.
      */
     public void onWeeklyClicked(ActionEvent actionEvent) throws SQLException {
         appointmentList = AppointmentQuery.getWeeklyAppointments(tableDatePicker);
@@ -454,8 +457,8 @@ public class AppointmentController implements Initializable {
     }
 
     /**
-     *
-     * @throws IOException
+     * Opens the Appointment window.
+     * @throws IOException Exception thrown if error opening FXML file.
      */
     public void open() throws IOException {
         Parent root = FXMLLoader.load(AppointmentController.class.getResource("../view/appointment.fxml"));
@@ -466,8 +469,8 @@ public class AppointmentController implements Initializable {
     }
 
     /**
-     *
-     * @throws SQLException
+     * Updates the Appointment Table based on the DatePicker and whether All, Monthly, or Weekly is selected.
+     * @throws SQLException Exception thrown if error with SQL statement or parameter.
      */
     public void refreshAppointmentTable() throws SQLException {
         if (allButton.isSelected()) {
@@ -484,8 +487,8 @@ public class AppointmentController implements Initializable {
     }
 
     /**
-     *
-     * @param disable
+     * Sets all fields, except for Appointment ID to either disabled or enabled
+     * @param disable true disables all fields, false enables all fields.
      */
     public void setDisableFields(boolean disable){
         titleField.setDisable(disable);
@@ -503,15 +506,15 @@ public class AppointmentController implements Initializable {
     }
 
     /**
-     *
-     * @param editInProcess
+     * Sets whether an Appointment is currently being edited.
+     * @param editInProcess true if an Appointment is edited; false if an Appointment is no longer being edited.
      */
     public void setEditInProcess(boolean editInProcess) {
         this.editInProcess = editInProcess;
     }
 
     /**
-     *
+     * Populates fields with the values from the selected Appointment.
      */
     public void setFields() {
         appointmentIdField.setText(selectedAppointment.getAppointmentId().toString());
@@ -530,16 +533,16 @@ public class AppointmentController implements Initializable {
     }
 
     /**
-     *
-     * @param newInProcess
+     * Sets whether a new Appointment is currently being entered.
+     * @param newInProcess true if a new Appointment is being entered; false if a new Appointment is not being entered.
      */
     public void setNewInProcess(boolean newInProcess) {
         this.newInProcess = newInProcess;
     }
 
     /**
-     *
-     * @param selectedAppointment
+     * Sets the selected Appointment with its values.
+     * @param selectedAppointment the Appointment ot be set.
      */
     public void setSelectedAppointment(Appointment selectedAppointment) {
         this.selectedAppointment = selectedAppointment;
