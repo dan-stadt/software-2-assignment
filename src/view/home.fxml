@@ -20,7 +20,7 @@
             <Insets bottom="10.0" left="10.0" right="10.0" top="5.0" />
          </padding>
          <Button mnemonicParsing="false" onAction="#onCustomerClicked" prefWidth="100.0" text="Customers" textAlignment="CENTER" />
-         <Button mnemonicParsing="false" onAction="#appointmentButton" prefWidth="100.0" text="Appointments" />
+         <Button mnemonicParsing="false" onAction="#onAppointmentClicked" prefWidth="100.0" text="Appointments" />
       </HBox>
       <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Generate Appointment Reports">
          <VBox.margin>

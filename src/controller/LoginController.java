@@ -66,15 +66,7 @@ public class LoginController implements Initializable {
     }
 
     /**
-     *
-     * @return
-     */
-    public static String getUsername(){
-        return username;
-    }
-
-    /**
-     *
+     * Closes the Login window and exits the program.
      */
     public void close(){
         Stage stage = (Stage) loginWindow.getScene().getWindow();
@@ -82,16 +74,23 @@ public class LoginController implements Initializable {
     }
 
     /**
-     *
-     * @param actionEvent
+     * Closes the Login window and exits the program.
+     * @param actionEvent Button is clicked.
      */
     public void exitClick(ActionEvent actionEvent) {
         close();
     }
+    /**
+     * Retrieves the username entered into the associated field.
+     * @return Returns a String of the username.
+     */
+    public static String getUsername(){
+        return username;
+    }
 
     /**
-     *
-     * @throws SQLException
+     * Checks if the username and password entered matches a record in the database.
+     * @throws SQLException Exception thrown if error in the SQL statement or parameter.
      */
     public void loginCheck() throws SQLException {
         File loginFile = new File("login_activity.txt");
@@ -141,22 +140,23 @@ public class LoginController implements Initializable {
     }
 
     /**
-     *
-     * @param actionEvent
-     * @throws SQLException
+     * Checks if the username and password entered matches a record in the database.
+     * @param actionEvent Button is clicked.
+     * @throws SQLException Exception thrown if error in the SQL statement or parameter.
      */
     public void onEnterClicked(ActionEvent actionEvent) throws SQLException {loginCheck();}
 
     /**
-     *
-     * @param actionEvent
-     * @throws SQLException
+     * Checks if the username and password entered match a record the database.
+     * Performed when the Enter key is pressed while focused in either of the fields.
+     * @param actionEvent Enter key is pressed.
+     * @throws SQLException Exception thrown if error in the SQL statement or parameter.
      */
     public void onFieldEntered(ActionEvent actionEvent) throws SQLException {loginCheck();}
 
     /**
-     *
-     * @throws IOException
+     * Opens the Login window.
+     * @throws IOException Exception thrown if Login FXML file cannot be opened.
      */
     public void open() throws IOException{
         Stage stage = new Stage();

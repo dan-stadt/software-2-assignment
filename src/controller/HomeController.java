@@ -18,7 +18,7 @@ public class HomeController implements Initializable {
     public AnchorPane homeWindow;
 
     /**
-     *
+     * Closes the Home window.
      */
     public void close(){
         Stage stage = (Stage) homeWindow.getScene().getWindow();
@@ -26,8 +26,8 @@ public class HomeController implements Initializable {
     }
 
     /**
-     *
-     * @throws IOException
+     * Opens the Home window.
+     * @throws IOException Exception thrown if error locating or opening Home FXML file.
      */
     public void open() throws IOException{
         Parent root = FXMLLoader.load(HomeController.class.getResource("../view/home.fxml"));
@@ -38,9 +38,9 @@ public class HomeController implements Initializable {
     }
 
     /**
-     *
-     * @param url
-     * @param resourceBundle
+     * Initializes the Home Screen.
+     * @param url The path of the Home FXML file.
+     * @param resourceBundle The Home FXML file object.
      */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -48,20 +48,20 @@ public class HomeController implements Initializable {
     }
 
     /**
-     *
-     * @param actionEvent
-     * @throws IOException
+     * Opens the Appointment window and closes the current Home window.
+     * @param actionEvent Button is clicked.
+     * @throws IOException Exception thrown if error opening the Appointment FXML file.
      */
-    public void appointmentButton(ActionEvent actionEvent) throws IOException {
+    public void onAppointmentClicked(ActionEvent actionEvent) throws IOException {
         AppointmentController appointments = new AppointmentController();
         appointments.open();
         close();
     }
 
     /**
-     *
-     * @param actionEvent
-     * @throws IOException
+     * Opens the Customer window and closes the current Home window.
+     * @param actionEvent Button is clicked.
+     * @throws IOException Exception thrown if error opening the Customer FXML file.
      */
     public void onCustomerClicked(ActionEvent actionEvent) throws IOException {
         CustomerController customer = new CustomerController();
@@ -70,8 +70,8 @@ public class HomeController implements Initializable {
     }
 
     /**
-     *
-     * @param actionEvent
+     *  Generates a report with the next appointment for each customer.
+     * @param actionEvent Button is clicked.
      */
     //TODO: Generate reports
     public void onCustomerReportClicked(ActionEvent actionEvent) {
@@ -80,20 +80,26 @@ public class HomeController implements Initializable {
     }
 
     /**
-     *
-     * @param actionEvent
+     * Generates a report of the schedule for each contact that includes appointment ID, title,
+     * type and description, start date and time, end date and time, and customer ID
+     * @param actionEvent Button is clicked.
      */
     public void onEmployeeReportClicked(ActionEvent actionEvent) {
 
     }
+
+    /**
+     * Generates a report with the total number of customer appointments by type and month.
+     * @param actionEvent Button is clicked.
+     */
     public void onSummaryReportClicked(ActionEvent actionEvent) {
 
     }
 
     /**
-     *
-     * @param actionEvent
-     * @throws IOException
+     * Exits the Home window and opens the Login window.
+     * @param actionEvent Button is clicked.
+     * @throws IOException Exception is thrown if the Login FXML file cannot be opened.
      */
     public void onExitClicked(ActionEvent actionEvent) throws IOException{
         LoginController login = new LoginController();

@@ -1,8 +1,6 @@
 package main;
 
 import helper.CustomerQuery;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 
 import java.sql.SQLException;
 
@@ -27,8 +25,6 @@ public class Customer {
         String country = CustomerQuery.getCountry(divisionId);
         setCountry(country);
         setDivision(division);
-
-        //TODO: Populate appointment list
     }
 
     public Customer(String name, String address, String postal, String phone, String division) throws SQLException {
