@@ -1,5 +1,7 @@
 package controller;
 
+import helper.AppointmentQuery;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -9,12 +11,26 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import main.Appointment;
+
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
+import java.time.Month;
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.ResourceBundle;
 
+import static helper.AppointmentQuery.getAppointmentList;
+
 public class HomeController implements Initializable {
+    /**
+     * Button to exit the Home window.
+     */
     public Button exitButton;
+    /**
+     * The FXML AnchorPane of the Home window.
+     */
     public AnchorPane homeWindow;
 
     /**
@@ -74,9 +90,12 @@ public class HomeController implements Initializable {
      * @param actionEvent Button is clicked.
      */
     //TODO: Generate reports
-    public void onCustomerReportClicked(ActionEvent actionEvent) {
+    public void onCustomerReportClicked(ActionEvent actionEvent) throws SQLException {
+        ObservableList<Appointment> appointmentList= AppointmentQuery.getAppointmentList();
+
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setContentText("");
+
     }
 
     /**
@@ -84,7 +103,8 @@ public class HomeController implements Initializable {
      * type and description, start date and time, end date and time, and customer ID
      * @param actionEvent Button is clicked.
      */
-    public void onEmployeeReportClicked(ActionEvent actionEvent) {
+    public void onEmployeeReportClicked(ActionEvent actionEvent) throws SQLException {
+        ObservableList<Appointment> appointmentList= AppointmentQuery.getAppointmentList();
 
     }
 
@@ -92,8 +112,66 @@ public class HomeController implements Initializable {
      * Generates a report with the total number of customer appointments by type and month.
      * @param actionEvent Button is clicked.
      */
-    public void onSummaryReportClicked(ActionEvent actionEvent) {
-
+    public void onSummaryReportClicked(ActionEvent actionEvent) throws SQLException {
+        class MonthCount{   //Local class for ArrayList to count types of appointments.
+            Month month;
+            int count;
+            MonthCount(Month month, int count){
+                this.month = month;
+                this.count = count;
+            }
+        }
+        class TypeCount{    //Local class for ArrayList to count types of appointments.
+            String type;
+            int count;
+            TypeCount(String type, int count){
+                this.type = type;
+                this.count = count;
+            }
+        }
+        ObservableList<Appointment> appointmentList = getAppointmentList();
+        ArrayList<MonthCount> monthList = new ArrayList<>(13);
+        ArrayList<TypeCount> typeList = new ArrayList<>();
+        for (int i = 1; i < Month.values().length + 1; i++){
+            Month month = Month.of(i);
+            MonthCount monthCount = new MonthCount(month, 0);
+            monthList.add(monthCount);
+        }
+        for (Appointment appointment : appointmentList){
+            Month month = appointment.getDate().getMonth();
+            int monthNum = month.getValue();
+            monthList.get(monthNum).count++;
+            String type = appointment.getType();
+            boolean found = false;
+            for (TypeCount typeCount : typeList){
+                if (type.equals(typeCount.type)){        //Increase the count of that type if found
+                    typeCount.count++;
+                    found = true;
+                }
+            }
+            if (!found){    //If type is not found, create a new type in the list with a count of 1.
+                TypeCount typeCount = new TypeCount(type, 1);
+                typeList.add(typeCount);
+            }
+        }
+        StringBuilder alertStringBuilder = new StringBuilder();
+        for (MonthCount monthCount : monthList){
+            alertStringBuilder.append(monthCount.month);
+            alertStringBuilder.append(": ");
+            alertStringBuilder.append(monthCount.count);
+            alertStringBuilder.append(" appointments.\n");
+        }
+        for (TypeCount typeCount : typeList){
+            alertStringBuilder.append(typeCount.type);
+            alertStringBuilder.append(": ");
+            alertStringBuilder.append(typeCount.count);
+            alertStringBuilder.append(" appointments\n");
+        }
+        String alertText = alertStringBuilder.toString();
+        Alert alert = new Alert(Alert.AlertType.INFORMATION, alertText);
+        alert.setTitle("Summary report");
+        alert.setHeaderText("Customer appointments by type and month.");
+        alert.showAndWait();
     }
 
     /**
