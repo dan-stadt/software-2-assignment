@@ -89,20 +89,21 @@ public class HomeController implements Initializable {
     }
 
     /**
-     *  Generates a report with the total appointments for each customer and the next appointment.
+     *  Generates a report with the total appointments for each customer and the next appointment for that customer.
      * @param actionEvent Button is clicked.
      */
     public void onCustomerReportClicked(ActionEvent actionEvent) throws SQLException {
         ObservableList<Appointment> appointmentList= AppointmentQuery.getAppointmentList();
         ObservableList<Customer> customerList = CustomerQuery.getCustomerList();
-        //Loop through appointment list
-        for (Appointment appointment : appointmentList){
-            int customerId = appointment.getAppointmentId();
-            for (Customer customer : customerList){
+        for (Appointment appointment : appointmentList){        //Loop through Appointment list to connect with Customers.
+            int customerId = appointment.getAppointmentId();    //Get Customer ID to match Appointments to Customers
+            for (Customer customer : customerList){             //Loop through Customer list to search for Customer ID
                 if (customerId == customer.getId()){
-                    customer.addAppointment(appointment);
-                    if (customer.getTotalAppointments() < 2) customer.setNextAppointment(appointment);
-                    else{
+                    customer.addAppointment(appointment);       //Add appointment to matching customer. Increases total  appointments to 1.
+                    if (customer.getTotalAppointments() < 2){   //If this is the first appointment added, set as the next appointment.
+                        customer.setNextAppointment(appointment);
+                    }
+                    else{   //If not first appointment added, check if it is earlier. If yes, replace it as nextAppointment.
                         LocalDateTime appointmentTime = appointment.getStartDateTime();
                         LocalDateTime nextAppointment = customer.getNextAppointment().getStartDateTime();
                         if (appointmentTime.isBefore(nextAppointment)){
@@ -112,14 +113,14 @@ public class HomeController implements Initializable {
                 }
             }
         }
-        StringBuilder alertStringBuilder = new StringBuilder();
+        StringBuilder alertStringBuilder = new StringBuilder();     //StringBuilder will build report text
         for (Customer customer : customerList) {
             alertStringBuilder.append(customer.getName());
-            alertStringBuilder.append("\n\n Total Appointments: ");
+            alertStringBuilder.append("\n\n    Total Appointments: ");
             int totalAppointments = customer.getTotalAppointments();
             alertStringBuilder.append(totalAppointments);
-            if (totalAppointments > 0) {
-                alertStringBuilder.append("\n Next appointment is with ");
+            if (totalAppointments > 0) {    //Confirm that a next appointment exists.
+                alertStringBuilder.append("\n    Next appointment is with ");
                 Appointment appointment = customer.getNextAppointment();
                 alertStringBuilder.append(appointment.getContactId());
                 alertStringBuilder.append(" at ");
@@ -132,9 +133,7 @@ public class HomeController implements Initializable {
         alert.setTitle("Customer Report");
         alert.setHeaderText("Next appoint and total appointments for each customer.");
         alert.showAndWait();
-
     }
-
     /**
      * Generates a report of the schedule for each contact that includes appointment ID, title,
      * type and description, start date and time, end date and time, and customer ID
@@ -143,22 +142,22 @@ public class HomeController implements Initializable {
     public void onContactReportClicked(ActionEvent actionEvent) throws SQLException {
         ObservableList<Appointment> appointmentList= AppointmentQuery.getAppointmentList();
         ObservableList<Contact> contactList = AppointmentQuery.getContactList();
-        for (Appointment appointment : appointmentList){
-            int contactId = appointment.getContactId();
-            for (Contact contact : contactList){
+        for (Appointment appointment : appointmentList){    //Loop through Appointment list to match Appointments to Contacts
+            int contactId = appointment.getContactId();     //Get Contact ID for Appointment
+            for (Contact contact : contactList){            //Loop through Contact list to find Contact matching Appointment
                 if (contactId == contact.getContactId()){
                     contact.addAppointment(appointment);
                     break;
                 }
             }
         }
-        StringBuilder alertStringBuilder = new StringBuilder();
+        StringBuilder alertStringBuilder = new StringBuilder(); //StringBuilder will build report text
         for (Contact contact : contactList){
             alertStringBuilder.append("\n Appointments for ");
             alertStringBuilder.append(contact.getContactName());
             alertStringBuilder.append(":\n\n");
             for (Appointment appointment : contact.getAppointmentList()){
-                alertStringBuilder.append("#");
+                alertStringBuilder.append("    #");
                 alertStringBuilder.append(appointment.getAppointmentId());
                 alertStringBuilder.append(" ");
                 alertStringBuilder.append(appointment.getTitle());
@@ -206,12 +205,12 @@ public class HomeController implements Initializable {
         ObservableList<Appointment> appointmentList = getAppointmentList();
         ArrayList<MonthCount> monthList = new ArrayList<>(13);
         ArrayList<TypeCount> typeList = new ArrayList<>();
-        for (int i = 1; i < Month.values().length + 1; i++){
+        for (int i = 1; i < Month.values().length + 1; i++){        //Get list of 12 months from Month enum
             Month month = Month.of(i);
             MonthCount monthCount = new MonthCount(month, 0);
             monthList.add(monthCount);
         }
-        for (Appointment appointment : appointmentList){
+        for (Appointment appointment : appointmentList){            //Loop through appointments to get total for each month
             Month month = appointment.getDate().getMonth();
             int monthNum = month.getValue();
             monthList.get(monthNum).count++;
