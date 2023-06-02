@@ -20,7 +20,9 @@ import main.Customer;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.time.Month;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
@@ -96,9 +98,41 @@ public class HomeController implements Initializable {
     public void onCustomerReportClicked(ActionEvent actionEvent) throws SQLException {
         ObservableList<Appointment> appointmentList= AppointmentQuery.getAppointmentList();
         ObservableList<Customer> customerList = CustomerQuery.getCustomerList();
-
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setContentText("");
+        //Loop through appointment list
+        for (Appointment appointment : appointmentList){
+            int customerId = appointment.getAppointmentId();
+            for (Customer customer : customerList){
+                if (customerId == customer.getId()){
+                    customer.addAppointment(appointment);
+                    if (customer.getTotalAppointments() < 2) customer.setNextAppointment(appointment);
+                    else{
+                        LocalDateTime appointmentTime = appointment.getStartDateTime();
+                        LocalDateTime nextAppointment = customer.getNextAppointment().getStartDateTime();
+                        if (appointmentTime.isBefore(nextAppointment)){
+                            customer.setNextAppointment(appointment);
+                        }
+                    }
+                }
+            }
+        }
+        StringBuilder alertStringBuilder = new StringBuilder();
+        for (Customer customer : customerList){
+            alertStringBuilder.append(customer.getName());
+            alertStringBuilder.append("\n\n Total Appointments: ");
+            int totalAppointments = customer.getTotalAppointments();
+            alertStringBuilder.append(totalAppointments);
+            alertStringBuilder.append("\n Next appointment is with ");
+            Appointment appointment = customer.getNextAppointment();
+            alertStringBuilder.append(appointment.getContactId());
+            alertStringBuilder.append(" at ");
+            alertStringBuilder.append(appointment.getStart());
+            alertStringBuilder.append("\n\n");
+        }
+        String alertText = alertStringBuilder.toString();
+        Alert alert = new Alert(Alert.AlertType.INFORMATION, alertText);
+        alert.setTitle("Customer Report");
+        alert.setHeaderText("Next appoint and total appointments for each customer.");
+        alert.showAndWait();
 
     }
 

@@ -1,6 +1,8 @@
 package main;
 
 import helper.CustomerQuery;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.sql.SQLException;
 
@@ -13,6 +15,9 @@ public class Customer {
     private String division;
     private int divisionId;
     private String country;
+    private ObservableList<Appointment> appointmentsList = FXCollections.observableArrayList();
+    private Appointment nextAppointment = new Appointment();
+    private int totalAppointments = 0;
 
     public Customer(int id, String name, String address, String postal, String phone, int divisionId) throws SQLException {
         setId(id);
@@ -38,6 +43,10 @@ public class Customer {
         String country = CustomerQuery.getCountry(divisionId);
         setCountry(country);
     }
+    public void addAppointment(Appointment appointment){
+        appointmentsList.add(appointment);
+        setTotalAppointments(appointmentsList.size());
+    }
     public String getAddress(){return address;}
     public String getCountry(){return country;}
     public int getDivisionId() {
@@ -59,4 +68,23 @@ public class Customer {
     public void setPostal(String postal){this.postal = postal;}
     public void setPhone(String phone){this.phone = phone;}
 
+    public ObservableList<Appointment> getAppointmentsList() {
+        return appointmentsList;
+    }
+
+    public Appointment getNextAppointment() {
+        return nextAppointment;
+    }
+
+    public void setNextAppointment(Appointment nextAppointment) {
+        this.nextAppointment = nextAppointment;
+    }
+
+    public int getTotalAppointments() {
+        return totalAppointments;
+    }
+
+    public void setTotalAppointments(int totalAppointments) {
+        this.totalAppointments = totalAppointments;
+    }
 }
