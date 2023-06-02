@@ -73,7 +73,9 @@ public class CustomerController implements Initializable {
 
     /**
      * Opens the Customer FXML Interface and configures Customer table.
-     * Fields are disabled at startup until a new customer is added or an exisitng customer is edited.
+     * Fields are disabled at startup until a new customer is added or an existing customer is edited.
+     * Lambda:  Creates a listener for when a Customer record is selected in the table to populate fields with Customer data.
+     *          Confirms selection if a Customer is being added or edited before updating fields.
      * @param url The location of the Customer FXML file.
      * @param resourceBundle The Customer FXML file object.
      */
@@ -128,6 +130,12 @@ public class CustomerController implements Initializable {
         Stage stage = (Stage) homeButton.getScene().getWindow();
         stage.close();
     }
+
+    /**
+     * Displays an Alert to confirm that the user wants to change the selectedCustomer and update Fields
+     * when a new Customer is selected in the Table.
+     * Lambda: Shows the Alert and uses response to determine if Fields should be updated or not.
+     */
     public void confirmSelect(){
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Change customer without saving?");
         //TODO: Lambda README

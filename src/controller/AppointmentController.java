@@ -108,8 +108,9 @@ public class AppointmentController implements Initializable {
             "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23");
 
     /**
-     * Initializes Appointment window. The ComboBox list is populated via a lambda that streams the contacts into a List.
-     * A Listener is created for the table via a lambda to update the selectedCustomer and fields based on the table selection.
+     * Initializes Appointment window.
+     * Lambda 1: The ComboBox list is populated with a lambda that streams the contacts into a List.
+     * Lambda 2: Creates a Listener for the table to update the selectedCustomer and fields based on the table selection.
      * @param url Pathway of FXML file
      * @param resourceBundle FXML file object.
      */
