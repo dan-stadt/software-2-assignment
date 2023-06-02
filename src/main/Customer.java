@@ -117,81 +117,86 @@ public class Customer {
     public String getName(){return name;}
 
     /**
-     *
-     * @return
+     * Retrieve the Postal Code of the Customer object
+     * @return Returns a String of the Customer's Postal code
      */
     public String getPostal(){return postal;}
 
     /**
-     *
-     * @return
+     * Retrieve the Customer's next appointment.
+     * @return Returns an Appointment that is the next to occur for the Customer
      */
     public Appointment getNextAppointment() { return nextAppointment; }
 
     /**
-     *
-     * @return
+     * Retrieve the Customer's phone number
+     * @return Returns a String with the Customer's phone number.
      */
     public String getPhone(){return phone;}
 
     /**
-     *
-     * @return
+     * Retrieve the total number of Appointments associated with the Customer object.
+     * @return Returns an integer with the size of the Customer's Appointment List.
      */
     public int getTotalAppointments() { return totalAppointments; }
 
     /**
-     *
-     * @param address
+     * Set the Customer's Address
+     * @param address Takes a String as input.
      */
     public void setAddress(String address){this.address = address;}
 
     /**
-     *
-     * @param country
+     * Set the Customer's country.
+     * @param country Takes a String as input.
      */
     public void setCountry(String country){this.country = country;}
 
     /**
-     *
-     * @param division
+     * Set the Customer's Division.
+     * @param division Takes a String as input.
      */
     public void setDivision(String division){this.division = division;}
 
     /**
-     *
-     * @param divisionId
+     * Set the Customer's Division ID
+     * @param divisionId Takes an integer as input.
      */
     public void setDivisionId(int divisionId) { this.divisionId = divisionId; }
 
     /**
-     *
-     * @param id
+     * Set the Customer ID
+     * @param id Takes an integer as input.
      */
     public void setId(int id){this.id = id;}
 
     /**
-     *
-     * @param name
+     * Set the Customer's Name.
+     * @param name Takes a String as input.
      */
     public void setName(String name){this.name = name;}
 
     /**
-     *
-     * @param postal
+     * Set the Customer's postal code
+     * @param postal Takes a String as input.
      */
     public void setPostal(String postal){this.postal = postal;}
+
+    /**
+     * Set the Customer's Next Appointment
+     * @param nextAppointment Takes an Appointment object as input.
+     */
     public void setNextAppointment(Appointment nextAppointment) { this.nextAppointment = nextAppointment; }
 
     /**
-     *
-     * @param phone
+     * Set the Customer's phone number.
+     * @param phone Takes a String as input.
      */
     public void setPhone(String phone){this.phone = phone;}
 
     /**
-     *
-     * @param totalAppointments
+     * Set the Customer's number of Total Appointments. Called whenever an Appointment is added.
+     * @param totalAppointments Takes an integer as input.
      */
     public void setTotalAppointments(int totalAppointments) { this.totalAppointments = totalAppointments; }
 }

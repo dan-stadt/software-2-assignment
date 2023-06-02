@@ -89,7 +89,7 @@ public class HomeController implements Initializable {
     }
 
     /**
-     *  Generates a report with the total appointments for each customer and the next appointment for that customer.
+     * Generates a report with the total appointments for each customer and the next appointment for that customer.
      * @param actionEvent Button is clicked.
      */
     public void onCustomerReportClicked(ActionEvent actionEvent) throws SQLException {
@@ -99,15 +99,19 @@ public class HomeController implements Initializable {
             int customerId = appointment.getAppointmentId();    //Get Customer ID to match Appointments to Customers
             for (Customer customer : customerList){             //Loop through Customer list to search for Customer ID
                 if (customerId == customer.getId()){
-                    customer.addAppointment(appointment);       //Add appointment to matching customer. Increases total  appointments to 1.
-                    if (customer.getTotalAppointments() < 2){   //If this is the first appointment added, set as the next appointment.
-                        customer.setNextAppointment(appointment);
-                    }
-                    else{   //If not first appointment added, check if it is earlier. If yes, replace it as nextAppointment.
-                        LocalDateTime appointmentTime = appointment.getStartDateTime();
-                        LocalDateTime nextAppointment = customer.getNextAppointment().getStartDateTime();
-                        if (appointmentTime.isBefore(nextAppointment)){
+                    customer.addAppointment(appointment);           //Add appointment to matching customer. Increases total  appointments to 1.
+                    LocalDateTime startTime = appointment.getStartDateTime();
+                    LocalDateTime now = LocalDateTime.now();
+                    if (startTime.isAfter(now)){                    //Confirm that appointment has not passed before setting as next appointment
+                        if (customer.getTotalAppointments() < 2){   //If this is the first appointment added, set as the next appointment.
                             customer.setNextAppointment(appointment);
+                        }
+                        else {   //If not first appointment added, check if it is earlier. If yes, replace it as nextAppointment.
+                            LocalDateTime appointmentTime = appointment.getStartDateTime();
+                            LocalDateTime nextAppointment = customer.getNextAppointment().getStartDateTime();
+                            if (appointmentTime.isBefore(nextAppointment)) {
+                                customer.setNextAppointment(appointment);
+                            }
                         }
                     }
                 }
@@ -119,7 +123,7 @@ public class HomeController implements Initializable {
             alertStringBuilder.append("\n\n    Total Appointments: ");
             int totalAppointments = customer.getTotalAppointments();
             alertStringBuilder.append(totalAppointments);
-            if (totalAppointments > 0) {    //Confirm that a next appointment exists.
+            if (customer.getNextAppointment().getStartDateTime() != null && totalAppointments > 0) {    //Confirm that a next appointment exists.
                 alertStringBuilder.append("\n    Next appointment is with ");
                 Appointment appointment = customer.getNextAppointment();
                 alertStringBuilder.append(appointment.getContactId());
@@ -246,6 +250,7 @@ public class HomeController implements Initializable {
         }
         alertStringBuilder.append("\nAppointments by Type: \n\n");
         for (TypeCount typeCount : typeList){
+            alertStringBuilder.append("    ");
             alertStringBuilder.append(typeCount.type);
             alertStringBuilder.append(": ");
             alertStringBuilder.append(typeCount.count);

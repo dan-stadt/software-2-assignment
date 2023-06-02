@@ -10,10 +10,10 @@ import java.time.Instant;
 
 public class CustomerQuery {
     /**
-     *
-     * @param customerId
-     * @return
-     * @throws SQLException
+     * Deletes a Customer from the SQL Database.
+     * @param customerId Takes the Customer ID of the Customer to delete.
+     * @return Returns true if the deletion successful, false if no Customer deleted due to failure to find ID or other error.
+     * @throws SQLException exception thrown if error in SQL statement or parameter(s).
      */
     public static boolean deleteCustomer(int customerId) throws SQLException {
         String sql = "DELETE FROM customers WHERE Customer_ID=?;";
@@ -23,10 +23,11 @@ public class CustomerQuery {
     }
 
     /**
-     *
-     * @param divisionId
-     * @return
-     * @throws SQLException
+     * Retrieves the Country String for the Division ID from the SQL Database.
+     * Used to properly format Country ComboBox when a Customer is selected.
+     * @param divisionId Takes an integer of the Division ID as input.
+     * @return Returns a String of the Country associated with the Division ID.
+     * @throws SQLException exception thrown if error in SQL statement or parameter(s).
      */
     public static String getCountry(int divisionId) throws SQLException {
         ResultSet result = selectDivision(divisionId);
@@ -46,10 +47,10 @@ public class CustomerQuery {
     }
 
     /**
-     *
-     * @param country
-     * @return
-     * @throws SQLException
+     * Retrieves the Country ID integer from the SQL Database
+     * @param country Takes the String of the Country Name as input
+     * @return Returns an integer of the County ID
+     * @throws SQLException exception thrown if error in SQL statement or parameter(s).
      */
     public static int getCountryId(String country) throws SQLException {
         String sql = "SELECT * FROM countries WHERE Country=?";
@@ -64,9 +65,9 @@ public class CustomerQuery {
     }
 
     /**
-     *
-     * @return
-     * @throws SQLException
+     *  Retrieves the list of countries as an ObservableList from the SQL Database.
+     * @return Returns an ObservableList with Strings of the Country names.
+     * @throws SQLException exception thrown if error in SQL statement or parameter(s).
      */
     public static ObservableList<String> getCountryList() throws SQLException {
         String sql = "SELECT * FROM countries";
@@ -80,13 +81,13 @@ public class CustomerQuery {
     }
 
     /**
-     *
-     * @param regionCode
-     * @return
-     * @throws SQLException
+     * Retrieves the Division Name associated with a Division ID from the SQL Database.
+     * @param divisionId Takes the Division ID to search as input.
+     * @return Returns the Division Name associated with the Division ID.
+     * @throws SQLException exception thrown if error in SQL statement or parameter(s).
      */
-    public static String getDivision(int regionCode) throws SQLException {
-        ResultSet result = selectDivision(regionCode);
+    public static String getDivision(int divisionId) throws SQLException {
+        ResultSet result = selectDivision(divisionId);
         String region = null;
         while(result.next()){
             region = result.getString("Division");
@@ -95,10 +96,10 @@ public class CustomerQuery {
     }
 
     /**
-     *
-     * @param division
-     * @return
-     * @throws SQLException
+     * Retrieves the Division ID associated with a Division Name from the SQL Database.
+     * @param division Takes the Division Name to search as Input.
+     * @return Returns an integer of the Division ID.
+     * @throws SQLException exception thrown if error in SQL statement or parameter(s).
      */
     public static int getDivisionId (String division) throws SQLException {
         String sql = "SELECT * FROM first_level_divisions WHERE Division=?;";
@@ -112,10 +113,11 @@ public class CustomerQuery {
     }
 
     /**
-     *
-     * @param country
-     * @return
-     * @throws SQLException
+     * Retrieves an ObservableList of Divisions within a Country from the SQL Database.
+     * Uses to update the Division ComboBox when the selected Country changes.
+     * @param country Takes a Country Name as input.
+     * @return Returns an ObservableList of Strings with the Division names.
+     * @throws SQLException exception thrown if error in SQL statement or parameter(s).
      */
     public static ObservableList<String> getDivisionList(String country) throws SQLException {
         int countryCode = getCountryId(country);
@@ -131,10 +133,10 @@ public class CustomerQuery {
     }
 
     /**
-     *
-     * @param customer
-     * @return
-     * @throws SQLException
+     * Adds a new Customer to the SQL Database.
+     * @param customer Takes a Customer object as input.
+     * @return Returns true if Customer successfully added to Database, false if Customer not added.
+     * @throws SQLException exception thrown if error in SQL statement or parameter(s).
      */
     public static boolean insertCustomer (Customer customer) throws SQLException {
         String sql = "INSERT INTO customers (Customer_Name, Address, Postal_Code, Phone, Division_ID, Create_Date, Created_By, Last_Update, Last_Updated_By) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);";
@@ -155,10 +157,10 @@ public class CustomerQuery {
     }
 
     /**
-     *
-     * @param customer
-     * @return
-     * @throws SQLException
+     * Checks if Customer has any associated appointments, which determines if a Customer can be deleted.
+     * @param customer Takes a Customer object as input.
+     * @return Returns true if Customer does not have any associated Appointments, false if one or more Appointments for Customer.
+     * @throws SQLException exception thrown if error in SQL statement or parameter(s).
      */
     public static boolean isSafeToDelete (Customer customer) throws SQLException{
         String sql = "SELECT * FROM appointments WHERE Customer_ID = ?";
@@ -170,9 +172,9 @@ public class CustomerQuery {
     }
 
     /**
-     *
-     * @return
-     * @throws SQLException
+     * Retrieves a list of all Customers in the SQL Database
+     * @return Returns an ObservableList of Customers
+     * @throws SQLException exception thrown if error in SQL statement or parameter(s).
      */
     public static ObservableList<Customer> getCustomerList () throws SQLException {
         String sql = "SELECT * FROM customers";
@@ -193,10 +195,10 @@ public class CustomerQuery {
     }
 
     /**
-     *
-     * @param divisionId
-     * @return
-     * @throws SQLException
+     * Returns a ResultSet of a Division record(s). from the SQL Database that match the Division ID input.
+     * @param divisionId Takes the Division ID to search as input.
+     * @return Returns a ResultSet with the matching Division record(s).
+     * @throws SQLException exception thrown if error in SQL statement or parameter(s).
      */
     public static ResultSet selectDivision(int divisionId) throws SQLException {
         String sql = "SELECT * FROM first_level_divisions WHERE Division_ID=?";
@@ -206,10 +208,10 @@ public class CustomerQuery {
     }
 
     /**
-     *
-     * @param customer
-     * @return
-     * @throws SQLException
+     * Updates a Customer Record in the SQL Database with the values of an input Customer object.
+     * @param customer Takes a Customer object as input
+     * @return Returns true if update successful, false if Customer ID not found or Customer unable to update.
+     * @throws SQLException exception thrown if error in SQL statement or parameter(s).
      */
     public static boolean updateCustomer(Customer customer) throws SQLException {
         String sql = "UPDATE customers SET Customer_Name=?, Address=?, Postal_Code=?, Phone=?, Division_ID=?, Last_Update=?, Last_Updated_By=? WHERE Customer_ID=?;";
