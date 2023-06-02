@@ -2,7 +2,6 @@ package controller;
 
 import helper.AppointmentQuery;
 import helper.CustomerQuery;
-import helper.UserQuery;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -16,13 +15,11 @@ import javafx.stage.Stage;
 import main.Appointment;
 import main.Contact;
 import main.Customer;
-
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -95,7 +92,6 @@ public class HomeController implements Initializable {
      *  Generates a report with the total appointments for each customer and the next appointment.
      * @param actionEvent Button is clicked.
      */
-    //TODO: Generate reports
     public void onCustomerReportClicked(ActionEvent actionEvent) throws SQLException {
         ObservableList<Appointment> appointmentList= AppointmentQuery.getAppointmentList();
         ObservableList<Customer> customerList = CustomerQuery.getCustomerList();
@@ -191,7 +187,7 @@ public class HomeController implements Initializable {
      * @param actionEvent Button is clicked.
      */
     public void onSummaryReportClicked(ActionEvent actionEvent) throws SQLException {
-        class MonthCount{   //Local class for ArrayList to count types of appointments.
+        class MonthCount{   //Local class for ArrayList to count months of appointments.
             Month month;
             int count;
             MonthCount(Month month, int count){
@@ -232,11 +228,19 @@ public class HomeController implements Initializable {
                 typeList.add(typeCount);
             }
         }
-        StringBuilder alertStringBuilder = new StringBuilder();
+        StringBuilder alertStringBuilder = new StringBuilder();                    //Report will be appended to StringBuilder
         alertStringBuilder.append("Appointments by month: \n\n");
         for (MonthCount monthCount : monthList){
-            String monthString =  monthCount.month.toString();
-            alertStringBuilder.append(monthString);
+            //#region Convert Month from Upper-case to sentence case.
+            String monthString = monthCount.month.toString();
+            int monthLength = monthString.length();
+            char[] monthCharArray = new char[monthLength];
+            monthCharArray[0] = monthString.charAt(0);                             //Set first character to uppercase
+            monthString = monthString.toLowerCase(Locale.ROOT);                    //Convert month string to lowercase
+            monthString.getChars(1,monthLength,monthCharArray,1);  //Update character array with lowercase letters
+            alertStringBuilder.append("   ");                                      //Indentation
+            alertStringBuilder.append(monthCharArray);                             //Append sentence case character array
+            //#endregion
             alertStringBuilder.append(": ");
             alertStringBuilder.append(monthCount.count);
             alertStringBuilder.append(" appointments.\n");
