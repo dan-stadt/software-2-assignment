@@ -34,7 +34,7 @@ public class Appointment {
     public Appointment(){}
 
     /**
-     * Constructor files all fields with parameters. Populates all associated date & time variables from start and end.
+     * Constructor files all fields with parameters. Populates all associated date and time variables from start and end.
      * @param appointmentId Takes int Appointment ID as input to populate associated field.
      * @param title Takes String title as input to populate associated field.
      * @param description Takes String description as input to populate associated field.
@@ -108,7 +108,7 @@ public class Appointment {
 
     /**
      * Get end formatted according to format variable
-     * @return String of formatted end date & time
+     * @return String of formatted end date and time
      */
     public String getEnd(){ return end; }
 
@@ -144,7 +144,7 @@ public class Appointment {
 
     /**
      * Get String start formatted according to format variable
-     * @return String of formatted start date & time
+     * @return String of formatted start date and time
      */
     public String getStart() { return start; }
 

@@ -261,8 +261,8 @@ public class CustomerController implements Initializable {
 
     /**
      * When edit button is clicked, all fields are enabled. Edit button is only visible when a Customer is selected.
-     * Fields will have already populated upon customer selection. Save button becomes visible. Edit & Delete buttons
-     * are hidden.
+     * Fields will have already populated upon customer selection. Save button becomes visible.
+     * Edit and Delete buttons are hidden.
      * @param actionEvent Edit button clicked.
      */
     public void onEditClicked(ActionEvent actionEvent) {

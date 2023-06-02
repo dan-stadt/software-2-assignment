@@ -4,6 +4,9 @@ import controller.LoginController;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
+/**
+ * @author Daniel Stadt
+ */
 public class Main extends Application {
     /**
      * Starts the program from the Login window.

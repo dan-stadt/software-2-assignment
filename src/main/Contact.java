@@ -10,7 +10,7 @@ public class Contact {
     private ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
 
     /**
-     * Generates a contact with Contact Id, Name, & Email for the Contact object.
+     * Generates a contact with Contact Id, Name, and Email for the Contact object.
      * @param contactId Contact ID to set.
      * @param contactName Contact Name to set.
      * @param email Contact email to set.

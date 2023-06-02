@@ -91,6 +91,7 @@ public class HomeController implements Initializable {
     /**
      * Generates a report with the total appointments for each customer and the next appointment for that customer.
      * @param actionEvent Button is clicked.
+     * @throws SQLException Exception thrown if error error in SQL Statement or Parameter.
      */
     public void onCustomerReportClicked(ActionEvent actionEvent) throws SQLException {
         ObservableList<Appointment> appointmentList= AppointmentQuery.getAppointmentList();
@@ -142,6 +143,7 @@ public class HomeController implements Initializable {
      * Generates a report of the schedule for each contact that includes appointment ID, title,
      * type and description, start date and time, end date and time, and customer ID
      * @param actionEvent Button is clicked.
+     * @throws SQLException Exception thrown if error error in SQL Statement or Parameter.
      */
     public void onContactReportClicked(ActionEvent actionEvent) throws SQLException {
         ObservableList<Appointment> appointmentList= AppointmentQuery.getAppointmentList();
@@ -188,6 +190,7 @@ public class HomeController implements Initializable {
     /**
      * Generates a report with the total number of customer appointments by type and month.
      * @param actionEvent Button is clicked.
+     * @throws SQLException Exception thrown if error error in SQL Statement or Parameter.
      */
     public void onSummaryReportClicked(ActionEvent actionEvent) throws SQLException {
         class MonthCount{   //Local class for ArrayList to count months of appointments.
