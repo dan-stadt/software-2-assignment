@@ -9,12 +9,25 @@ import java.sql.*;
 import java.time.Instant;
 
 public class CustomerQuery {
+    /**
+     *
+     * @param customerId
+     * @return
+     * @throws SQLException
+     */
     public static boolean deleteCustomer(int customerId) throws SQLException {
         String sql = "DELETE FROM customers WHERE Customer_ID=?;";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
         ps.setInt(1, customerId);
         return ps.executeUpdate() > 0;
     }
+
+    /**
+     *
+     * @param divisionId
+     * @return
+     * @throws SQLException
+     */
     public static String getCountry(int divisionId) throws SQLException {
         ResultSet result = selectDivision(divisionId);
         int countryCode = 0;
@@ -31,6 +44,13 @@ public class CustomerQuery {
         }
         return country;
     }
+
+    /**
+     *
+     * @param country
+     * @return
+     * @throws SQLException
+     */
     public static int getCountryId(String country) throws SQLException {
         String sql = "SELECT * FROM countries WHERE Country=?";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
@@ -42,6 +62,12 @@ public class CustomerQuery {
         }
         return countryId;
     }
+
+    /**
+     *
+     * @return
+     * @throws SQLException
+     */
     public static ObservableList<String> getCountryList() throws SQLException {
         String sql = "SELECT * FROM countries";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
@@ -52,6 +78,13 @@ public class CustomerQuery {
         }
         return countryList;
     }
+
+    /**
+     *
+     * @param regionCode
+     * @return
+     * @throws SQLException
+     */
     public static String getDivision(int regionCode) throws SQLException {
         ResultSet result = selectDivision(regionCode);
         String region = null;
@@ -60,6 +93,13 @@ public class CustomerQuery {
         }
         return region;
     }
+
+    /**
+     *
+     * @param division
+     * @return
+     * @throws SQLException
+     */
     public static int getDivisionId (String division) throws SQLException {
         String sql = "SELECT * FROM first_level_divisions WHERE Division=?;";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
@@ -70,6 +110,13 @@ public class CustomerQuery {
         }
         else{return 0;}
     }
+
+    /**
+     *
+     * @param country
+     * @return
+     * @throws SQLException
+     */
     public static ObservableList<String> getDivisionList(String country) throws SQLException {
         int countryCode = getCountryId(country);
         String sql = "SELECT * FROM first_level_divisions WHERE Country_ID = ?";
@@ -82,6 +129,13 @@ public class CustomerQuery {
         }
         return divisionList;
     }
+
+    /**
+     *
+     * @param customer
+     * @return
+     * @throws SQLException
+     */
     public static boolean insertCustomer (Customer customer) throws SQLException {
         String sql = "INSERT INTO customers (Customer_Name, Address, Postal_Code, Phone, Division_ID, Create_Date, Created_By, Last_Update, Last_Updated_By) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
@@ -99,6 +153,13 @@ public class CustomerQuery {
         ps.setString(9, user);
         return !ps.execute();
     }
+
+    /**
+     *
+     * @param customer
+     * @return
+     * @throws SQLException
+     */
     public static boolean isSafeToDelete (Customer customer) throws SQLException{
         String sql = "SELECT * FROM appointments WHERE Customer_ID = ?";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
@@ -107,6 +168,12 @@ public class CustomerQuery {
         ResultSet result = ps.executeQuery();
         return !result.next();
     }
+
+    /**
+     *
+     * @return
+     * @throws SQLException
+     */
     public static ObservableList<Customer> getCustomerList () throws SQLException {
         String sql = "SELECT * FROM customers";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
@@ -124,12 +191,26 @@ public class CustomerQuery {
         }
         return customerList;
     }
+
+    /**
+     *
+     * @param divisionId
+     * @return
+     * @throws SQLException
+     */
     public static ResultSet selectDivision(int divisionId) throws SQLException {
         String sql = "SELECT * FROM first_level_divisions WHERE Division_ID=?";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
         ps.setInt(1, divisionId);
         return ps.executeQuery();
     }
+
+    /**
+     *
+     * @param customer
+     * @return
+     * @throws SQLException
+     */
     public static boolean updateCustomer(Customer customer) throws SQLException {
         String sql = "UPDATE customers SET Customer_Name=?, Address=?, Postal_Code=?, Phone=?, Division_ID=?, Last_Update=?, Last_Updated_By=? WHERE Customer_ID=?;";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);

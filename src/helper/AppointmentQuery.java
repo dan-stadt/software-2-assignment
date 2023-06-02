@@ -34,14 +34,7 @@ public class AppointmentQuery {
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
         return parseAppointmentList(ps.executeQuery());
     }
-    /**
-     * Generates report with total number of appointments by type and month.
-     * @throws SQLException exception thrown if error in SQL statement or parameter(s).
-     */
-    public static void getAppointmentByTypeMonth() throws SQLException {
-        ObservableList<Appointment> appointmentList = getAppointmentList();
-        //TODO:Create method
-    }
+
     /**
      * Retrieves all contacts in the SQL database.
      * @return ObservableList of Contacts.
@@ -64,10 +57,9 @@ public class AppointmentQuery {
     /**
      * Insert a new appointment into the SQL database.
      * @param appointment inputs appointment to add to the database.
-     * @return true if insert is successfully, otherwise false.
      * @throws SQLException exception thrown if error in SQL statement or parameter(s).
      */
-    public static boolean insertAppointment (Appointment appointment) throws SQLException {
+    public static void insertAppointment (Appointment appointment) throws SQLException {
         String sql = "INSERT INTO appointments (Title, Description, Location, Type, Start, End," +
                 "Create_Date, Created_By, Last_Update, Last_Updated_By, Customer_ID, User_ID, Contact_ID) " +
                 "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
@@ -88,7 +80,7 @@ public class AppointmentQuery {
         ps.setInt(11, appointment.getCustomerId());
         ps.setInt(12, appointment.getUserId());
         ps.setInt(13, appointment.getContactId());
-        return !ps.execute();
+        ps.execute();
     }
 
     /**
@@ -178,7 +170,7 @@ public class AppointmentQuery {
         return !ps.execute();
     }
     /**
-     * Retrives all Appointments from a ResultSet.
+     * Retrieves all Appointments from a ResultSet.
      * @param resultSet ResultSet from an executed PreparedStatement.
      * @return ObservableList of Appointments.
      * @throws SQLException exception thrown if error in SQL statement or parameter(s).
