@@ -35,7 +35,7 @@
             <Insets bottom="25.0" top="5.0" />
          </padding>
          <Button mnemonicParsing="false" onAction="#onSummaryReportClicked" text="Summary" />
-         <Button mnemonicParsing="false" onAction="#onEmployeeReportClicked" text="By Employee" />
+         <Button mnemonicParsing="false" onAction="#onContactReportClicked" text="By Contact" />
          <Button mnemonicParsing="false" onAction="#onCustomerReportClicked" text="By Customer" />
       </HBox>
       <HBox alignment="CENTER_RIGHT">

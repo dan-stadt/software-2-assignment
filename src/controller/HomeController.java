@@ -1,6 +1,8 @@
 package controller;
 
 import helper.AppointmentQuery;
+import helper.CustomerQuery;
+import helper.UserQuery;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -12,13 +14,14 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import main.Appointment;
+import main.Contact;
+import main.Customer;
 
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.Month;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 import static helper.AppointmentQuery.getAppointmentList;
@@ -86,12 +89,13 @@ public class HomeController implements Initializable {
     }
 
     /**
-     *  Generates a report with the next appointment for each customer.
+     *  Generates a report with the total appointments for each customer and the next appointment.
      * @param actionEvent Button is clicked.
      */
     //TODO: Generate reports
     public void onCustomerReportClicked(ActionEvent actionEvent) throws SQLException {
         ObservableList<Appointment> appointmentList= AppointmentQuery.getAppointmentList();
+        ObservableList<Customer> customerList = CustomerQuery.getCustomerList();
 
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setContentText("");
@@ -103,9 +107,46 @@ public class HomeController implements Initializable {
      * type and description, start date and time, end date and time, and customer ID
      * @param actionEvent Button is clicked.
      */
-    public void onEmployeeReportClicked(ActionEvent actionEvent) throws SQLException {
+    public void onContactReportClicked(ActionEvent actionEvent) throws SQLException {
         ObservableList<Appointment> appointmentList= AppointmentQuery.getAppointmentList();
-
+        ObservableList<Contact> contactList = AppointmentQuery.getContactList();
+        for (Appointment appointment : appointmentList){
+            int contactId = appointment.getContactId();
+            for (Contact contact : contactList){
+                if (contactId == contact.getContactId()){
+                    contact.addAppointment(appointment);
+                    break;
+                }
+            }
+        }
+        StringBuilder alertStringBuilder = new StringBuilder();
+        for (Contact contact : contactList){
+            alertStringBuilder.append("\n Appointments for ");
+            alertStringBuilder.append(contact.getContactName());
+            alertStringBuilder.append(":\n\n");
+            for (Appointment appointment : contact.getAppointmentList()){
+                alertStringBuilder.append("\u2022 #");
+                alertStringBuilder.append(appointment.getAppointmentId());
+                alertStringBuilder.append(" ");
+                alertStringBuilder.append(appointment.getTitle());
+                alertStringBuilder.append(" ");
+                alertStringBuilder.append(appointment.getType());
+                alertStringBuilder.append(" ");
+                alertStringBuilder.append(appointment.getDescription());
+                alertStringBuilder.append(" starts at ");
+                alertStringBuilder.append(appointment.getStart());
+                alertStringBuilder.append(", ends at ");
+                alertStringBuilder.append(appointment.getEnd());
+                alertStringBuilder.append(" for Customer #");
+                alertStringBuilder.append(appointment.getCustomerId());
+                alertStringBuilder.append("\n");
+            }
+        }
+        String alertText = alertStringBuilder.toString();
+        Alert alert = new Alert(Alert.AlertType.INFORMATION, alertText);
+        alert.setTitle("Appointments by Contact");
+        alert.setHeaderText("Appointments with appointment ID, title, type, description, and start/end times, and Customer ID.");
+        alert.showAndWait();
     }
 
     /**
