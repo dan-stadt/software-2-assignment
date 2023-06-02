@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 import static helper.AppointmentQuery.getAppointmentList;
@@ -116,16 +117,18 @@ public class HomeController implements Initializable {
             }
         }
         StringBuilder alertStringBuilder = new StringBuilder();
-        for (Customer customer : customerList){
+        for (Customer customer : customerList) {
             alertStringBuilder.append(customer.getName());
             alertStringBuilder.append("\n\n Total Appointments: ");
             int totalAppointments = customer.getTotalAppointments();
             alertStringBuilder.append(totalAppointments);
-            alertStringBuilder.append("\n Next appointment is with ");
-            Appointment appointment = customer.getNextAppointment();
-            alertStringBuilder.append(appointment.getContactId());
-            alertStringBuilder.append(" at ");
-            alertStringBuilder.append(appointment.getStart());
+            if (totalAppointments > 0) {
+                alertStringBuilder.append("\n Next appointment is with ");
+                Appointment appointment = customer.getNextAppointment();
+                alertStringBuilder.append(appointment.getContactId());
+                alertStringBuilder.append(" at ");
+                alertStringBuilder.append(appointment.getStart());
+            }
             alertStringBuilder.append("\n\n");
         }
         String alertText = alertStringBuilder.toString();
@@ -159,7 +162,7 @@ public class HomeController implements Initializable {
             alertStringBuilder.append(contact.getContactName());
             alertStringBuilder.append(":\n\n");
             for (Appointment appointment : contact.getAppointmentList()){
-                alertStringBuilder.append("\u2022 #");
+                alertStringBuilder.append("#");
                 alertStringBuilder.append(appointment.getAppointmentId());
                 alertStringBuilder.append(" ");
                 alertStringBuilder.append(appointment.getTitle());
@@ -230,12 +233,15 @@ public class HomeController implements Initializable {
             }
         }
         StringBuilder alertStringBuilder = new StringBuilder();
+        alertStringBuilder.append("Appointments by month: \n\n");
         for (MonthCount monthCount : monthList){
-            alertStringBuilder.append(monthCount.month);
+            String monthString =  monthCount.month.toString();
+            alertStringBuilder.append(monthString);
             alertStringBuilder.append(": ");
             alertStringBuilder.append(monthCount.count);
             alertStringBuilder.append(" appointments.\n");
         }
+        alertStringBuilder.append("\nAppointments by Type: \n\n");
         for (TypeCount typeCount : typeList){
             alertStringBuilder.append(typeCount.type);
             alertStringBuilder.append(": ");
