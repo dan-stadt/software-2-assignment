@@ -1,5 +1,9 @@
 package main;
 
+import helper.AppointmentQuery;
+import javafx.collections.ObservableList;
+
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -7,7 +11,7 @@ import java.time.format.DateTimeFormatter;
 
 public class Appointment {
     //#region Class variables
-    private Contact contact = new Contact();
+    private final Contact contact = new Contact();
     private Integer appointmentId;
     private Integer customerId;
     private Integer userId;
@@ -26,7 +30,6 @@ public class Appointment {
     private String start;
     private Timestamp endTimestamp;
     private Timestamp startTimestamp;
-    private final DateTimeFormatter format = DateTimeFormatter.ofPattern("h:mm a, MM/d/yy");
     //#endregion
     /**
      * Default constructor; fields are not populated.
@@ -48,7 +51,7 @@ public class Appointment {
      */
     public Appointment(Integer appointmentId, String title, String description, String location,
                        String type, Timestamp start, Timestamp end, Integer customerId,
-                       Integer userId, Integer contactId){
+                       Integer userId, Integer contactId) throws SQLException {
         setAppointmentId(appointmentId);
         setTitle(title);
         setDescription(description);
@@ -59,10 +62,12 @@ public class Appointment {
         setCustomerId(customerId);
         setUserId(userId);
         setContactId(contactId);
+        setContactName(getContactNameFromId(contactId));
         setStartDateTime(start.toLocalDateTime());
         setDate(startDateTime.toLocalDate());
         setStartHour((startDateTime.getHour()));
         setStartMinute(startDateTime.getMinute());
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("h:mm a, MM/d/yy");
         setStart(startDateTime.format(format));
         setEndDateTime(end.toLocalDateTime());
         setEndHour(endDateTime.getHour());
@@ -82,6 +87,18 @@ public class Appointment {
      */
     public String getContactName() {return contact.getContactName();}
 
+    /**
+     * Retrieve the Contact Name associated with a Contact ID
+     */
+    public String getContactNameFromId(int contactId) throws SQLException {
+        ObservableList<Contact> contactList= AppointmentQuery.getContactList();
+        for (Contact contact : contactList){
+            if (contactId == contact.getContactId()){
+                return contact.getContactName();
+            }
+        }
+        return null;
+    }
     /**
      * Get Contact ID as Integer
       * @return Integer contactID
@@ -191,7 +208,7 @@ public class Appointment {
     public Integer getUserId() {return userId; }
 
     /**
-     * Set appointmetnId as Integer value
+     * Set appointmentId as Integer value
      * @param appointmentId Integer to set appointmentId
      */
     public void setAppointmentId(Integer appointmentId) {this.appointmentId = appointmentId;}

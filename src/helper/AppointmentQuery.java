@@ -155,19 +155,17 @@ public class AppointmentQuery {
      * @throws SQLException exception thrown if error in SQL statement or parameter(s).
      */
     public static boolean isConflicting(Appointment appointment) throws SQLException{
-        String sql = "SELECT * FROM appointments WHERE Start BETWEEN ? AND ? OR End BETWEEN ? AND ? AND Appointment_ID <> ? AND Customer_ID = ?";
+        String sql = "SELECT * FROM appointments WHERE Start BETWEEN ? AND ? OR End BETWEEN ? AND ? AND Appointment_ID <> ?";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
         Timestamp startTime = appointment.getStartTimestamp();
         Timestamp endTime = appointment.getEndTimestamp();
         int appointmentId = appointment.getAppointmentId();
-        int customerId = appointment.getCustomerId();
         ps.setTimestamp(1, startTime);
         ps.setTimestamp(2, endTime);
         ps.setTimestamp(3, startTime);
         ps.setTimestamp(4, endTime);
         ps.setInt(5, appointmentId);
-        ps.setInt(6, customerId);
-        return !ps.execute();
+        return ps.execute();
     }
     /**
      * Retrieves all Appointments from a ResultSet.

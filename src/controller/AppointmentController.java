@@ -241,7 +241,7 @@ public class AppointmentController implements Initializable {
      * Pulls all information from each field to create a new Appointment object.
      * @return Returns an Appointment object populated with the current fields.
      */
-    public Appointment getAppointmentFromFields() {
+    public Appointment getAppointmentFromFields() throws SQLException {
         int appointmentId = 0;
         if (isEditInProcess()) appointmentId = Integer.parseInt(appointmentIdField.getText());
         String title = titleField.getText();
