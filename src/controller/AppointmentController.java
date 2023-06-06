@@ -424,6 +424,9 @@ public class AppointmentController implements Initializable {
                     setEditInProcess(false);
                 }
                 refreshAppointmentTable();
+                newButton.setVisible(true);
+                editButton.setVisible(false);
+                saveButton.setVisible(false);
             }
         } catch(Exception e){
             alert = new Alert(Alert.AlertType.ERROR, "Confirm all fields entered properly");
