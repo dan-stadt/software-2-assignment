@@ -157,7 +157,6 @@ public class AppointmentController implements Initializable {
         appointmentTable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         setEditInProcess(false);
         setNewInProcess(false);
-        //TODO: Lambda README
         ListChangeListener<Appointment> tableListener = change -> {
             if (appointmentTable.getSelectionModel().getSelectedItem() != null) {
                 setSelectedAppointment(appointmentTable.getSelectionModel().getSelectedItem());
@@ -165,6 +164,7 @@ public class AppointmentController implements Initializable {
                     setFields();
                     editButton.setVisible(true);
                     deleteButton.setVisible(true);
+                    newButton.setVisible(true);
                 } else confirmSelect();
             }
         };
@@ -314,6 +314,8 @@ public class AppointmentController implements Initializable {
             alert.showAndWait();
             refreshAppointmentTable();
             clearFields();
+            newButton.setVisible(true);
+            editButton.setVisible(true);
         }
         else{
             Alert alert = new Alert(Alert.AlertType.ERROR, "Unable to delete appointment.");
